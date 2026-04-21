@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MedCore.Auth.Tests/MedCore.Auth.Tests.csproj" />
+  <Project Path="MedCore.Auth.WebApi/MedCore.Auth.WebApi.csproj" />
+</Solution>

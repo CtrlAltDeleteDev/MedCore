@@ -1,0 +1,6 @@
+@MedCore.Auth.WebApi_HostAddress = http://localhost:5209
+
+# GET {{MedCore.Auth.WebApi_HostAddress}}/weatherforecast/
+# Accept: application/json
+
+###
