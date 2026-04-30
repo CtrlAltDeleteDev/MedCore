@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="MedCore.Auth.IdentityServer/MedCore.Auth.IdentityServer.csproj" Id="c621ea2f-bd02-47d8-8d93-7118065f0173" />
-  <Project Path="MedCore.Auth.Tests/MedCore.Auth.Tests.csproj" />
-  <Project Path="MedCore.Auth.WebApi/MedCore.Auth.WebApi.csproj" />
-</Solution>

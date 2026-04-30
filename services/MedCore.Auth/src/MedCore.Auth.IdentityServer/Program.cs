@@ -26,7 +26,6 @@ try
         Log.Information("Seeding database...");
         SeedData.EnsureSeedData(app);
         Log.Information("Done seeding database. Exiting.");
-        return;
     }
 
     if (app.Environment.IsDevelopment())
