@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\MedCore.Auth.IdentityServer\MedCore.Auth.IdentityServer.csproj" />
+    <ProjectReference Include="..\MedCore.Auth.IdentityServer\MedCore.Auth.IdentityServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
