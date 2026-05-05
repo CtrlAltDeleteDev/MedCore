@@ -7,10 +7,14 @@ var sql = builder
 
 var sqlDb = sql.AddDatabase("sqldb");
 
-builder
-    .AddProject<Projects.MedCore_Auth_IdentityServer>("medcore-auth-identityserver")
-    .WithArgs("/seed")
+
+var migrator = builder.AddProject<Projects.MedCore_DatabaseMigrationJob>("medcore-database-migration-job")
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
     .WaitFor(sqlDb);
+
+builder
+    .AddProject<Projects.MedCore_Auth_IdentityServer>("medcore-auth-identityserver")
+    .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
+    .WaitFor(migrator);
 
 await builder.Build().RunAsync();

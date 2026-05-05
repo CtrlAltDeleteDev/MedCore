@@ -12,9 +12,9 @@ using Serilog.Filters;
 
 namespace MedCore.Auth.IdentityServer;
 
-internal static class HostingExtensions
+public static class HostingExtensions
 {
-    public static WebApplicationBuilder ConfigureLogging(this WebApplicationBuilder builder)
+    public static IHostApplicationBuilder ConfigureLogging(this IHostApplicationBuilder builder)
     {
         // Write most logs to the console but diagnostic data to a file.
         // See https://docs.duendesoftware.com/identityserver/diagnostics/data

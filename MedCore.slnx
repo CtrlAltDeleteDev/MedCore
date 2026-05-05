@@ -4,6 +4,9 @@
     <Project Path="services/MedCore.Auth/host/MedCore.Auth.AppHost/MedCore.Auth.AppHost.csproj" />
     <Project Path="services/MedCore.Auth/src/MedCore.Auth.IdentityServer/MedCore.Auth.IdentityServer.csproj" Id="c621ea2f-bd02-47d8-8d93-7118065f0173" />
   </Folder>
+  <Folder Name="/services/MedCore.Auth/Integration/">
+    <Project Path="services/MedCore.Auth/src/MedCore.DatabaseMigrationJob/MedCore.DatabaseMigrationJob.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/MedCore.Auth.Tests/MedCore.Auth.Tests.csproj" />
   </Folder>

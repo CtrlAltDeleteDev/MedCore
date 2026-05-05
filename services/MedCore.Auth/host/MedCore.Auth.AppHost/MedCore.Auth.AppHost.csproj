@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.2.4">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.2.4">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/MedCore.Auth.IdentityServer/MedCore.Auth.IdentityServer.csproj" />
+    <ProjectReference Include="..\..\src\MedCore.DatabaseMigrationJob\MedCore.DatabaseMigrationJob.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.Azure.Sql" Version="13.2.4" />
