@@ -26,6 +26,9 @@ try
             var usage = app.Services.GetRequiredService<LicenseUsageSummary>();
             Console.Write(Summary(usage));
         });
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
 
     app.Run();

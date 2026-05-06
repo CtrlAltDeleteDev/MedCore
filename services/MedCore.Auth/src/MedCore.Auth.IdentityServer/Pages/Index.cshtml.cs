@@ -14,6 +14,5 @@ public class Index : PageModel
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion.Split('+').First()
             ?? "unavailable";
-
     public IdentityServerLicense? License { get; }
 }
