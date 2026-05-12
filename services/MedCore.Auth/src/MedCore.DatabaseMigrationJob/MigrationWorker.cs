@@ -55,7 +55,7 @@ namespace MedCore.DatabaseMigrationJob
             return 1;
         }
 
-        public async Task EnsureSeedData(ApplicationDbContext context, UserManager<ApplicationUser> userMgr, CancellationToken cancellationToken)
+        private async Task EnsureSeedData(ApplicationDbContext context, UserManager<ApplicationUser> userMgr, CancellationToken cancellationToken)
         {
             var alice = await userMgr.FindByNameAsync("alice");
             if (alice == null)
