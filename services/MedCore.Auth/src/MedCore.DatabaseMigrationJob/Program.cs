@@ -1,7 +1,6 @@
-﻿using Duende.IdentityServer.EntityFramework.DbContexts;
-using Duende.IdentityServer.EntityFramework.Options;
-using Duende.IdentityServer.EntityFramework.Storage;
-using MedCore.Auth.IdentityServer;
+﻿using MedCore.Auth.IdentityServer;
+using MedCore.Auth.IdentityServer.Data;
+using MedCore.Auth.IdentityServer.Models;
 using MedCore.DatabaseMigrationJob;
 using MedCore.DatabaseMigrationJob.Configuration;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
 
 internal class Program
 {
@@ -30,20 +28,13 @@ internal class Program
 
         builder.Services.AddSingleton<MigrationWorker>();
         builder.Services.AddSingleton(new DbContextOptions<DbContext>());
-        builder.Services.AddSingleton(new ConfigurationStoreOptions());
-        builder.Services.AddSingleton(new OperationalStoreOptions());
+
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
         var migrationAssembly = typeof(MedCore.Auth.IdentityServer.HostingExtensions).Assembly.FullName;
 
-        builder.Services.AddDbContext<PersistedGrantDbContext>(opts =>
-        {
-            opts.UseSqlServer(connectionString, sql =>
-            {
-                sql.MigrationsAssembly(migrationAssembly);
-            });
-        });
-
-        builder.Services.AddDbContext<ConfigurationDbContext>(opts =>
+        builder.Services.AddDbContext<ApplicationDbContext>(opts =>
         {
             opts.UseSqlServer(connectionString, sql =>
             {
