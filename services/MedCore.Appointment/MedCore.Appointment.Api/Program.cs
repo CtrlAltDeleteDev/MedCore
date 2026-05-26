@@ -29,7 +29,6 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "MedCore Appointment API", Version = "v1" });
 
-    // Declare the Bearer scheme so the Authorize button appears in Swagger UI.
     options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Name = "Authorization",

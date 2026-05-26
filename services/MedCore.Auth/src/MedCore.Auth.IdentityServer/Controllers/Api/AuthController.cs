@@ -50,7 +50,6 @@ public sealed class AuthController : ControllerBase
             return Unauthorized(new { error = "Invalid username or password." });
         }
 
-        // CheckPasswordSignInAsync validates password + respects lockout WITHOUT writing a cookie.
         var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
         if (!result.Succeeded)
         {
