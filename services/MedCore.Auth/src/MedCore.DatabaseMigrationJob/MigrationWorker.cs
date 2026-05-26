@@ -1,15 +1,9 @@
 ﻿using Duende.IdentityModel;
-using Duende.IdentityServer.EntityFramework.DbContexts;
-using Duende.IdentityServer.EntityFramework.Mappers;
-using Duende.IdentityServer.Models;
-using MedCore.Auth.IdentityServer;
 using MedCore.Auth.IdentityServer.Data;
 using MedCore.Auth.IdentityServer.Models;
 using MedCore.DatabaseMigrationJob.Configuration;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Security.Claims;
 

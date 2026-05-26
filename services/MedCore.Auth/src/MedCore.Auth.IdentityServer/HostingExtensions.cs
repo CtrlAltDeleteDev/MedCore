@@ -54,8 +54,13 @@ public static class HostingExtensions
     {
         builder.Services.AddRazorPages();
         builder.Services.AddControllers();
-        builder.Services.Configure<JwtSettings>(
-            builder.Configuration.GetSection(JwtSettings.SectionName));
+
+        var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+        if(jwtSettingsSection is null)
+        {
+            throw new InvalidOperationException("JwtSettings configuration section is missing.");
+        }
+        builder.Services.Configure<JwtSettings>(jwtSettingsSection);
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -84,20 +89,16 @@ public static class HostingExtensions
         builder.Services.AddAuthentication()
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                var jwtSettings = builder.Configuration
-                    .GetSection(JwtSettings.SectionName)
-                    .Get<JwtSettings>()!;
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+                        Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
                     ClockSkew = TimeSpan.Zero,
                 };
             })
