@@ -1,5 +1,8 @@
-﻿using MedCore.Appointment.DatabaseMigrationJob;
+﻿using MedCore.Appointment.Api;
+using MedCore.Appointment.DatabaseMigrationJob;
+using MedCore.Appoitment.Data;
 using MedCore.DatabaseMigrationJob.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,13 +23,15 @@ internal class Program
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        //builder.Services.AddDbContext<>(opts =>
-        //{
-        //    opts.UseSqlServer(connectionString, sql =>
-        //    {
-        //        sql.MigrationsAssembly(migrationAssembly);
-        //    });
-        //});
+        var migrationAssembly = typeof(HostingExtensions).Assembly.FullName;
+
+        builder.Services.AddDbContext<AppoitmentDbContext>(opts =>
+        {
+            opts.UseSqlServer(connectionString, sql =>
+            {
+                sql.MigrationsAssembly(migrationAssembly);
+            });
+        });
 
         var host = builder.Build();
         var worker = host.Services.GetRequiredService<MigrationWorker>();

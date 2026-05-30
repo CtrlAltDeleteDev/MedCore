@@ -123,23 +123,6 @@ public static class HostingExtensions
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "MedCore Auth API", Version = "v1" });
-
-            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-            });
-
-            options.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme),
-                    new List<string>()
-                }
-            });
         });
 
         return builder.Build();

@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace MedCore.Appoitment.Data.Entities
+{
+    public class Meet
+    {
+        public int Id { get; set; }
+        public string Subject { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public int EmployeeId { get; set; }
+        public int PatientId { get; set; }
+        public bool IsActive { get; set; } = true;
+        public Employee Employee { get; set; }
+    }
+}

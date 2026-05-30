@@ -8,11 +8,6 @@ namespace MedCore.Appointment.Api.Controllers
     [Authorize]
     public class Appointment : ControllerBase
     {
-        [HttpGet]
-        [Route("qwe")]
-        public IActionResult Getqwe()
-        {
-            return Ok("qwe");
-        }
+        
     }
 }
