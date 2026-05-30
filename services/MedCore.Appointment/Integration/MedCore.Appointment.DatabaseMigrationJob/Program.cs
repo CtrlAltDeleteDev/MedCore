@@ -20,10 +20,13 @@ internal class Program
         builder.Services.AddSingleton<Settings>(settings);
 
         builder.Logging.ClearProviders();
+        builder.ConfigureLogging();
+
+        builder.Services.AddSingleton<MigrationWorker>();
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        var migrationAssembly = typeof(HostingExtensions).Assembly.FullName;
+        var migrationAssembly = typeof(AppoitmentDbContext).Assembly.FullName;
 
         builder.Services.AddDbContext<AppoitmentDbContext>(opts =>
         {

@@ -58,10 +58,11 @@ public sealed class AuthController : ControllerBase
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        return Ok(BuildJwtToken(user, roles));
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        return Ok(BuildJwtToken(user, roles, userClaims));
     }
 
-    private LoginResponse BuildJwtToken(ApplicationUser user, IList<string> roles)
+    private LoginResponse BuildJwtToken(ApplicationUser user, IList<string> roles, IList<Claim> userClaims)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -74,6 +75,7 @@ public sealed class AuthController : ControllerBase
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
         claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+        claims.AddRange(userClaims);
 
         var expiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes);
 

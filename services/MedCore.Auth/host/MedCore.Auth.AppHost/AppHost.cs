@@ -12,10 +12,14 @@ var sql = builder
 
 var sqlDb = sql.AddDatabase("sqldb");
 
-var migrator = builder.AddProject<Projects.MedCore_DatabaseMigrationJob>("medcore-database-migration-job")
+var authMigrator = builder.AddProject<Projects.MedCore_DatabaseMigrationJob>("medcore-auth-migration-job")
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
     .WaitFor(sqlDb);
 
+var appoitmentMigrator = builder.AddProject<Projects.MedCore_Appointment_DatabaseMigrationJob>("medcore-appointment-migration-job")
+    .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
+    .WaitFor(sqlDb);
+    
 builder
     .AddProject<Projects.MedCore_Auth_IdentityServer>("medcore-auth-identityserver")
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
@@ -23,7 +27,7 @@ builder
     .WithEnvironment("JwtSettings__Audience", jwtAudience)
     .WithEnvironment("JwtSettings__SecretKey", jwtSecretKey)
     .WithEnvironment("JwtSettings__ExpirationMinutes", jwtExpirationMinutes)
-    .WaitFor(migrator);
+    .WaitFor(authMigrator);
 
 builder.AddProject<Projects.MedCore_Appointment_Api>("medcore-appointment-api")
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
@@ -31,6 +35,6 @@ builder.AddProject<Projects.MedCore_Appointment_Api>("medcore-appointment-api")
     .WithEnvironment("JwtSettings__Audience", jwtAudience)
     .WithEnvironment("JwtSettings__SecretKey", jwtSecretKey)
     .WithEnvironment("JwtSettings__ExpirationMinutes", jwtExpirationMinutes)
-    .WaitFor(migrator);
+    .WaitFor(appoitmentMigrator);
 
 await builder.Build().RunAsync();

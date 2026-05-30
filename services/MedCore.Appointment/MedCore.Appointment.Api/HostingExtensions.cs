@@ -2,6 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
+using Serilog;
+using System.Globalization;
+using Serilog.Filters;
 
 namespace MedCore.Appointment.Api
 {
@@ -63,6 +66,38 @@ namespace MedCore.Appointment.Api
             app.UseAuthorization();
             app.MapControllers();
             return app;
+        }
+
+        public static IHostApplicationBuilder ConfigureLogging(this IHostApplicationBuilder builder)
+        {
+            builder.Services.AddSerilog(lc =>
+            {
+                lc.WriteTo.Logger(consoleLogger =>
+                {
+                    consoleLogger.WriteTo.Console(
+                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                        formatProvider: CultureInfo.InvariantCulture);
+                    if (builder.Environment.IsDevelopment())
+                    {
+                        consoleLogger.Filter.ByExcluding(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                    }
+                });
+                if (builder.Environment.IsDevelopment())
+                {
+                    lc.WriteTo.Logger(fileLogger =>
+                    {
+                        fileLogger
+                            .WriteTo.File("./diagnostics/diagnostic.log", rollingInterval: RollingInterval.Day,
+                                fileSizeLimitBytes: 1024 * 1024 * 10, // 10 MB
+                                rollOnFileSizeLimit: true,
+                                outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                                formatProvider: CultureInfo.InvariantCulture)
+                            .Filter
+                            .ByIncludingOnly(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
+                    }).Enrich.FromLogContext().ReadFrom.Configuration(builder.Configuration);
+                }
+            });
+            return builder;
         }
 
     }

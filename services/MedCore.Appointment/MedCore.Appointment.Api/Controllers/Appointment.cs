@@ -8,6 +8,13 @@ namespace MedCore.Appointment.Api.Controllers
     [Authorize]
     public class Appointment : ControllerBase
     {
-        
+        [HttpGet("my-appointments")]
+        [Authorize]
+        public async Task<IActionResult> GetMyAppointments()
+        {
+            var patientId = int.Parse(User.FindFirst("patient_id")!.Value);
+
+            return Ok();
+        }
     }
 }

@@ -1,0 +1,4 @@
+﻿dotnet ef migrations add InitialMigration `
+  -c AppoitmentDbContext `
+  -o Migrations `
+  --startup-project ..\Integration\MedCore.Appointment.DatabaseMigrationJob

@@ -33,7 +33,7 @@ namespace MedCore.Appoitment.Data
 
              builder.Entity<Meet>()
                 .HasOne(m => m.Employee)
-                .WithMany()
+                .WithMany(e => e.Meets)
                 .HasForeignKey(m => m.EmployeeId);
 
             builder.Entity<Employee>().Property(x => x.FullName).IsRequired().HasMaxLength(256);

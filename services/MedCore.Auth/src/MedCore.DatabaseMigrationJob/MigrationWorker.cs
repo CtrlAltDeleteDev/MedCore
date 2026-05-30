@@ -68,18 +68,17 @@ namespace MedCore.DatabaseMigrationJob
                 new Claim("location", "somewhere"),
             });
 
-            // Patients 1–9 — correspond to PatientId values seeded in the Appointment service
             var patients = new[]
             {
-                (id: 1, username: "patient1", email: "emma.wilson@dental.local",     given: "Emma",      family: "Wilson"),
-                (id: 2, username: "patient2", email: "james.cooper@dental.local",    given: "James",     family: "Cooper"),
-                (id: 3, username: "patient3", email: "sophia.martinez@dental.local", given: "Sophia",    family: "Martinez"),
-                (id: 4, username: "patient4", email: "oliver.brown@dental.local",    given: "Oliver",    family: "Brown"),
-                (id: 5, username: "patient5", email: "ava.thompson@dental.local",    given: "Ava",       family: "Thompson"),
-                (id: 6, username: "patient6", email: "liam.johnson@dental.local",    given: "Liam",      family: "Johnson"),
-                (id: 7, username: "patient7", email: "isabella.davis@dental.local",  given: "Isabella",  family: "Davis"),
-                (id: 8, username: "patient8", email: "noah.garcia@dental.local",     given: "Noah",      family: "Garcia"),
-                (id: 9, username: "patient9", email: "mia.anderson@dental.local",    given: "Mia",       family: "Anderson"),
+                (id: 1, username: "patient1", email: "melnyk.olha@dental.local",       given: "Ольга",      family: "Мельник"),
+                (id: 2, username: "patient2", email: "kovalenko.ivan@dental.local",    given: "Іван",       family: "Коваленко"),
+                (id: 3, username: "patient3", email: "bondarenko.yulia@dental.local",  given: "Юлія",       family: "Бондаренко"),
+                (id: 4, username: "patient4", email: "tkachenko.dmytro@dental.local",  given: "Дмитро",     family: "Ткаченко"),
+                (id: 5, username: "patient5", email: "savchenko.anna@dental.local",    given: "Анна",       family: "Савченко"),
+                (id: 6, username: "patient6", email: "kravchenko.serhii@dental.local", given: "Сергій",     family: "Кравченко"),
+                (id: 7, username: "patient7", email: "lysenko.natalia@dental.local",   given: "Наталія",    family: "Лисенко"),
+                (id: 8, username: "patient8", email: "petrenko.mykola@dental.local",   given: "Микола",     family: "Петренко"),
+                (id: 9, username: "patient9", email: "moroz.oksana@dental.local",      given: "Оксана",     family: "Мороз"),
             };
 
             foreach (var p in patients)
