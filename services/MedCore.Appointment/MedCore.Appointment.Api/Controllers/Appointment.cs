@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MedCore.Appointment.Application.Queries.GetSkillsQuery;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedCore.Appointment.Api.Controllers
@@ -6,15 +8,25 @@ namespace MedCore.Appointment.Api.Controllers
     [ApiController]
     [Route("api/appointments")]
     [Authorize]
-    public class Appointment : ControllerBase
+    public class Appointment(IMediator mediator ) : ControllerBase
     {
-        [HttpGet("my-appointments")]
-        [Authorize]
-        public async Task<IActionResult> GetMyAppointments()
-        {
-            var patientId = int.Parse(User.FindFirst("patient_id")!.Value);
+        private readonly IMediator _mediator = mediator;
 
-            return Ok();
+        [HttpGet("skills")]
+        public async Task<IActionResult> GetSkillsAsync() 
+        {
+            var query = new GetSkillsQuery();
+
+            var result = await _mediator.Send(query);
+
+            if(result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            else
+            {
+                return BadRequest(result.Error);
+            }
         }
     }
 }

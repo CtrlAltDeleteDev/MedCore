@@ -39,7 +39,6 @@ public sealed class AuthController : ControllerBase
     /// <response code="401">Invalid credentials.</response>
     [HttpPost("login")]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces("application/json")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
