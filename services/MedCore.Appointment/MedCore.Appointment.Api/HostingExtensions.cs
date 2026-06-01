@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using MedCore.Appoitment.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
@@ -36,6 +37,10 @@ namespace MedCore.Appointment.Api
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "MedCore Appointment API", Version = "v1" });
+
+                var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory,
+                    $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
+                options.IncludeXmlComments(xmlPath);
 
                 options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
                 {

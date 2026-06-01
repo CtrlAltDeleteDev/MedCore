@@ -6,7 +6,7 @@ namespace MedCore.Appoitment.Data
 {
     public static class DependencyInjection
     {
-        public static void AddAppoitmentData(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAppointmentData(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppoitmentDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

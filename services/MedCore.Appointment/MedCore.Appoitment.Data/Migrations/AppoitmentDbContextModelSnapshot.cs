@@ -75,9 +75,6 @@ namespace MedCore.Appoitment.Data.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EmployeeId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -86,6 +83,10 @@ namespace MedCore.Appoitment.Data.Migrations
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("SkillIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
@@ -98,8 +99,6 @@ namespace MedCore.Appoitment.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("EmployeeId1");
 
                     b.ToTable("Meets", "Appoitment");
                 });
@@ -119,12 +118,17 @@ namespace MedCore.Appoitment.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("MeetId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MeetId");
 
                     b.ToTable("Skills", "Appoitment");
                 });
@@ -147,21 +151,29 @@ namespace MedCore.Appoitment.Data.Migrations
             modelBuilder.Entity("MedCore.Appoitment.Data.Entities.Meet", b =>
                 {
                     b.HasOne("MedCore.Appoitment.Data.Entities.Employee", "Employee")
-                        .WithMany()
+                        .WithMany("Meets")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MedCore.Appoitment.Data.Entities.Employee", null)
-                        .WithMany("Meets")
-                        .HasForeignKey("EmployeeId1");
-
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("MedCore.Appoitment.Data.Entities.Skill", b =>
+                {
+                    b.HasOne("MedCore.Appoitment.Data.Entities.Meet", null)
+                        .WithMany("Skills")
+                        .HasForeignKey("MeetId");
                 });
 
             modelBuilder.Entity("MedCore.Appoitment.Data.Entities.Employee", b =>
                 {
                     b.Navigation("Meets");
+                });
+
+            modelBuilder.Entity("MedCore.Appoitment.Data.Entities.Meet", b =>
+                {
+                    b.Navigation("Skills");
                 });
 #pragma warning restore 612, 618
         }

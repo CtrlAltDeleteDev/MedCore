@@ -4,5 +4,5 @@ using System.Text;
 
 namespace MedCore.Appointment.Application.DTOs
 {
-    public record SkillsDto(SkillDto[] Skills);
+    public record MeetsShortDto(DateTime startTime, DateTime? endTime);
 }

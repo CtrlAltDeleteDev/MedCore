@@ -19,6 +19,7 @@
     <Project Path="services/MedCore.Auth/src/MedCore.DatabaseMigrationJob/MedCore.DatabaseMigrationJob.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/MedCore.Appointment.Application.Tests/MedCore.Appointment.Application.Tests.csproj" />
     <Project Path="tests/MedCore.Auth.Tests/MedCore.Auth.Tests.csproj" />
   </Folder>
 </Solution>

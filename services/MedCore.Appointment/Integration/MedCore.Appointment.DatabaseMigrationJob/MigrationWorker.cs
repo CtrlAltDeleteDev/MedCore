@@ -52,78 +52,57 @@ namespace MedCore.Appointment.DatabaseMigrationJob
 
             var baseDate = DateTime.UtcNow.Date;
 
-            var skillCaries = new Skill { Name = "Лікування карієсу", Description = "Пломбування та відновлення зубів при карієсі" };
-            var skillExtraction = new Skill { Name = "Видалення зубів", Description = "Проста та хірургічна екстракція зубів" };
-            var skillWhitening = new Skill { Name = "Відбілювання зубів", Description = "Професійне відбілювання системою Beyond" };
-            var skillOrtho = new Skill { Name = "Ортодонтія", Description = "Брекети, елайнери, ретейнери" };
-            var skillImplants = new Skill { Name = "Дентальні імпланти", Description = "Встановлення та відновлення дентальних імплантів" };
-            var skillCleaning = new Skill { Name = "Ультразвукове чищення", Description = "Видалення зубного каменю та нальоту" };
-            var skillPerio = new Skill { Name = "Лікування пародонту", Description = "Лікування захворювань ясен та пародонту" };
-            var skillProsthetics = new Skill { Name = "Протезування", Description = "Коронки, вініри, мости, знімні протези" };
+            // --- Pass 1: skills + employees (щоб отримати Id) ---
+            var skillCaries      = new Skill { Name = "Лікування карієсу",    Description = "Пломбування та відновлення зубів при карієсі" };
+            var skillExtraction  = new Skill { Name = "Видалення зубів",       Description = "Проста та хірургічна екстракція зубів" };
+            var skillWhitening   = new Skill { Name = "Відбілювання зубів",    Description = "Професійне відбілювання системою Beyond" };
+            var skillOrtho       = new Skill { Name = "Ортодонтія",            Description = "Брекети, елайнери, ретейнери" };
+            var skillImplants    = new Skill { Name = "Дентальні імпланти",    Description = "Встановлення та відновлення дентальних імплантів" };
+            var skillCleaning    = new Skill { Name = "Ультразвукове чищення", Description = "Видалення зубного каменю та нальоту" };
+            var skillPerio       = new Skill { Name = "Лікування пародонту",   Description = "Лікування захворювань ясен та пародонту" };
+            var skillProsthetics = new Skill { Name = "Протезування",          Description = "Коронки, вініри, мости, знімні протези" };
 
-            var employees = new List<Employee>
+            var moroz     = new Employee { FullName = "Мороз Олексій Іванович",     Title = "Лікар-стоматолог терапевт", IsActive = true, Skills = new List<Skill> { skillCaries, skillWhitening, skillCleaning } };
+            var kovalchuk = new Employee { FullName = "Ковальчук Наталія Сергіївна", Title = "Лікар-ортодонт",            IsActive = true, Skills = new List<Skill> { skillOrtho, skillCaries } };
+            var shevchenko = new Employee { FullName = "Шевченко Василь Петрович",  Title = "Лікар-хірург стоматолог",   IsActive = true, Skills = new List<Skill> { skillExtraction, skillImplants } };
+            var lysenko   = new Employee { FullName = "Лисенко Ірина Олексіївна",   Title = "Лікар-пародонтолог",        IsActive = true, Skills = new List<Skill> { skillPerio, skillCleaning, skillProsthetics } };
+
+            dbContext.AddRange(moroz, kovalchuk, shevchenko, lysenko);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            // --- Pass 2: meets з SkillIds (Id вже відомі після першого Save) ---
+            var meets = new List<Meet>
             {
-                new Employee
-                {
-                    FullName = "Мороз Олексій Іванович",
-                    Title = "Лікар-стоматолог терапевт",
-                    IsActive = true,
-                    Skills = new List<Skill> { skillCaries, skillWhitening, skillCleaning },
-                    Meets = new List<Meet>
-                    {
-                        new Meet { Subject = "Лікування карієсу — верхній лівий моляр", PatientId = 1,
-                            StartTime = baseDate.AddDays(1).AddHours(9),   EndTime = baseDate.AddDays(1).AddHours(10) },
-                        new Meet { Subject = "Профілактичний огляд", PatientId = 2,
-                            StartTime = baseDate.AddDays(1).AddHours(11),  EndTime = baseDate.AddDays(1).AddHours(11).AddMinutes(30) },
-                        new Meet { Subject = "Відбілювання зубів", PatientId = 3,
-                            StartTime = baseDate.AddDays(3).AddHours(14),  EndTime = baseDate.AddDays(3).AddHours(15).AddMinutes(30) }
-                    }
-                },
-                new Employee
-                {
-                    FullName = "Ковальчук Наталія Сергіївна",
-                    Title = "Лікар-ортодонт",
-                    IsActive = true,
-                    Skills = new List<Skill> { skillOrtho, skillCaries },
-                    Meets = new List<Meet>
-                    {
-                        new Meet { Subject = "Первинна консультація ортодонта", PatientId = 4,
-                            StartTime = baseDate.AddDays(2).AddHours(10),  EndTime = baseDate.AddDays(2).AddHours(11) },
-                        new Meet { Subject = "Встановлення брекетів", PatientId = 5,
-                            StartTime = baseDate.AddDays(4).AddHours(9),   EndTime = baseDate.AddDays(4).AddHours(11) }
-                    }
-                },
-                new Employee
-                {
-                    FullName = "Шевченко Василь Петрович",
-                    Title = "Лікар-хірург стоматолог",
-                    IsActive = true,
-                    Skills = new List<Skill> { skillExtraction, skillImplants },
-                    Meets = new List<Meet>
-                    {
-                        new Meet { Subject = "Видалення зуба мудрості", PatientId = 6,
-                            StartTime = baseDate.AddDays(1).AddHours(13),  EndTime = baseDate.AddDays(1).AddHours(14) },
-                        new Meet { Subject = "Встановлення імпланту (позиція 36)", PatientId = 7,
-                            StartTime = baseDate.AddDays(5).AddHours(10),  EndTime = baseDate.AddDays(5).AddHours(12) }
-                    }
-                },
-                new Employee
-                {
-                    FullName = "Лисенко Ірина Олексіївна",
-                    Title = "Лікар-пародонтолог",
-                    IsActive = true,
-                    Skills = new List<Skill> { skillPerio, skillCleaning, skillProsthetics },
-                    Meets = new List<Meet>
-                    {
-                        new Meet { Subject = "Ультразвукове чищення зубів", PatientId = 8,
-                            StartTime = baseDate.AddDays(2).AddHours(12),  EndTime = baseDate.AddDays(2).AddHours(13) },
-                        new Meet { Subject = "Лікування гінгівіту", PatientId = 9,
-                            StartTime = baseDate.AddDays(6).AddHours(9),   EndTime = baseDate.AddDays(6).AddHours(10) }
-                    }
-                }
+                new Meet { EmployeeId = moroz.Id,      PatientId = 1, SkillIds = new[] { skillCaries.Id },
+                    Subject = "Лікування карієсу — верхній лівий моляр",
+                    StartTime = baseDate.AddDays(1).AddHours(9),   EndTime = baseDate.AddDays(1).AddHours(10) },
+                new Meet { EmployeeId = moroz.Id,      PatientId = 2, SkillIds = new[] { skillCleaning.Id },
+                    Subject = "Профілактичний огляд",
+                    StartTime = baseDate.AddDays(1).AddHours(11),  EndTime = baseDate.AddDays(1).AddHours(11).AddMinutes(30) },
+                new Meet { EmployeeId = moroz.Id,      PatientId = 3, SkillIds = new[] { skillWhitening.Id },
+                    Subject = "Відбілювання зубів",
+                    StartTime = baseDate.AddDays(3).AddHours(14),  EndTime = baseDate.AddDays(3).AddHours(15).AddMinutes(30) },
+                new Meet { EmployeeId = kovalchuk.Id,  PatientId = 4, SkillIds = new[] { skillOrtho.Id },
+                    Subject = "Первинна консультація ортодонта",
+                    StartTime = baseDate.AddDays(2).AddHours(10),  EndTime = baseDate.AddDays(2).AddHours(11) },
+                new Meet { EmployeeId = kovalchuk.Id,  PatientId = 5, SkillIds = new[] { skillOrtho.Id },
+                    Subject = "Встановлення брекетів",
+                    StartTime = baseDate.AddDays(4).AddHours(9),   EndTime = baseDate.AddDays(4).AddHours(11) },
+                new Meet { EmployeeId = shevchenko.Id, PatientId = 6, SkillIds = new[] { skillExtraction.Id },
+                    Subject = "Видалення зуба мудрості",
+                    StartTime = baseDate.AddDays(1).AddHours(13),  EndTime = baseDate.AddDays(1).AddHours(14) },
+                new Meet { EmployeeId = shevchenko.Id, PatientId = 7, SkillIds = new[] { skillImplants.Id },
+                    Subject = "Встановлення імпланту (позиція 36)",
+                    StartTime = baseDate.AddDays(5).AddHours(10),  EndTime = baseDate.AddDays(5).AddHours(12) },
+                new Meet { EmployeeId = lysenko.Id,    PatientId = 8, SkillIds = new[] { skillCleaning.Id },
+                    Subject = "Ультразвукове чищення зубів",
+                    StartTime = baseDate.AddDays(2).AddHours(12),  EndTime = baseDate.AddDays(2).AddHours(13) },
+                new Meet { EmployeeId = lysenko.Id,    PatientId = 9, SkillIds = new[] { skillPerio.Id },
+                    Subject = "Лікування гінгівіту",
+                    StartTime = baseDate.AddDays(6).AddHours(9),   EndTime = baseDate.AddDays(6).AddHours(10) },
             };
 
-            dbContext.AddRange(employees);
+            dbContext.AddRange(meets);
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 

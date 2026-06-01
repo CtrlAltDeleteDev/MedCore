@@ -13,6 +13,8 @@ namespace MedCore.Appoitment.Data.Entities
         public int EmployeeId { get; set; }
         public int PatientId { get; set; }
         public bool IsActive { get; set; } = true;
+        public int[] SkillIds { get; set; }
         public Employee Employee { get; set; }
+        public Skill[] Skills { get; set; }
     }
 }

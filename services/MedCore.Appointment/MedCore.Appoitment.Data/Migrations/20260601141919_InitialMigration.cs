@@ -31,22 +31,6 @@ namespace MedCore.Appoitment.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Skills",
-                schema: "Appoitment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skills", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Meets",
                 schema: "Appoitment",
                 columns: table => new
@@ -59,7 +43,7 @@ namespace MedCore.Appoitment.Data.Migrations
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
                     PatientId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    EmployeeId1 = table.Column<int>(type: "int", nullable: true)
+                    SkillIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,11 +55,28 @@ namespace MedCore.Appoitment.Data.Migrations
                         principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Skills",
+                schema: "Appoitment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    MeetId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skills", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Meets_Employees_EmployeeId1",
-                        column: x => x.EmployeeId1,
+                        name: "FK_Skills_Meets_MeetId",
+                        column: x => x.MeetId,
                         principalSchema: "Appoitment",
-                        principalTable: "Employees",
+                        principalTable: "Meets",
                         principalColumn: "Id");
                 });
 
@@ -119,10 +120,10 @@ namespace MedCore.Appoitment.Data.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Meets_EmployeeId1",
+                name: "IX_Skills_MeetId",
                 schema: "Appoitment",
-                table: "Meets",
-                column: "EmployeeId1");
+                table: "Skills",
+                column: "MeetId");
         }
 
         /// <inheritdoc />
@@ -133,11 +134,11 @@ namespace MedCore.Appoitment.Data.Migrations
                 schema: "Appoitment");
 
             migrationBuilder.DropTable(
-                name: "Meets",
+                name: "Skills",
                 schema: "Appoitment");
 
             migrationBuilder.DropTable(
-                name: "Skills",
+                name: "Meets",
                 schema: "Appoitment");
 
             migrationBuilder.DropTable(

@@ -12,12 +12,12 @@ using System.Text;
 
 namespace MedCore.Appointment.Application.Queries.GetSkillsQuery
 {
-    public class GetSkillsQueryHandler(AppoitmentDbContext appoitmentDbContext, ILogger<GetSkillsQueryHandler> logger) : IRequestHandler<GetSkillsQuery, Result<SkillsDto>>
+    public class GetSkillsQueryHandler(AppoitmentDbContext appoitmentDbContext, ILogger<GetSkillsQueryHandler> logger) : IRequestHandler<GetSkillsQuery, Result<SkillDto[]>>
     {
         private readonly AppoitmentDbContext _appoitmentDbContext = appoitmentDbContext;
         private readonly ILogger<GetSkillsQueryHandler> _logger = logger;
 
-        public async Task<Result<SkillsDto>> Handle(GetSkillsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<SkillDto[]>> Handle(GetSkillsQuery request, CancellationToken cancellationToken)
         {
             try
             {
@@ -26,12 +26,12 @@ namespace MedCore.Appointment.Application.Queries.GetSkillsQuery
                     .Select(x => new SkillDto(x.Id, x.Name, x.Description))
                     .ToArrayAsync(cancellationToken);
 
-                return Result<SkillsDto>.Ok(new SkillsDto(skills));
+                return Result<SkillDto[]>.Ok(skills);
             }
             catch(Exception ex) 
             {
                 _logger.LogError("Error while fetching skills: {Message}", ex.Message);
-                return Result<SkillsDto>.Fail("Error while fetching skills");
+                return Result<SkillDto[]>.Fail("Error while fetching skills");
             }
         }
     }

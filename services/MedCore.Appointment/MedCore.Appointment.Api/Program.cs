@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.ConfigureLogging();
 builder.Services.ConfigureServices(builder.Configuration);
 builder.Services.AddApplication();
-builder.Services.AddAppoitmentData(builder.Configuration);
+builder.Services.AddAppointmentData(builder.Configuration);
+builder.Services.AddValidators();
 
 var app = builder.Build();
 

@@ -42,6 +42,7 @@ namespace MedCore.Appoitment.Data
             builder.Entity<Skill>().Property(x => x.Name).IsRequired().HasMaxLength(256);
 
             builder.Entity<Meet>().Property(x => x.Subject).IsRequired().HasMaxLength(128);
+            builder.Entity<Meet>().HasMany(e => e.Skills);
         }
     }
 }

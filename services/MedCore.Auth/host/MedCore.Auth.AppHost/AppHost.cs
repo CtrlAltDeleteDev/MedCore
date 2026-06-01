@@ -18,7 +18,8 @@ var authMigrator = builder.AddProject<Projects.MedCore_DatabaseMigrationJob>("me
 
 var appoitmentMigrator = builder.AddProject<Projects.MedCore_Appointment_DatabaseMigrationJob>("medcore-appointment-migration-job")
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
-    .WaitFor(sqlDb);
+    .WaitFor(sqlDb)
+    .WaitFor(authMigrator);
     
 builder
     .AddProject<Projects.MedCore_Auth_IdentityServer>("medcore-auth-identityserver")
