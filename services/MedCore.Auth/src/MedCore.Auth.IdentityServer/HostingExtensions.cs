@@ -1,10 +1,14 @@
 using System.Globalization;
+using System.Text;
 using Duende.IdentityServer;
+using MedCore.Auth.IdentityServer.Configuration;
 using MedCore.Auth.IdentityServer.Data;
 using MedCore.Auth.IdentityServer.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Serilog;
 using Serilog.Filters;
 
@@ -49,6 +53,14 @@ public static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddRazorPages();
+        builder.Services.AddControllers();
+
+        var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+        if(jwtSettingsSection is null)
+        {
+            throw new InvalidOperationException("JwtSettings configuration section is missing.");
+        }
+        builder.Services.Configure<JwtSettings>(jwtSettingsSection);
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -75,6 +87,21 @@ public static class HostingExtensions
             .AddLicenseSummary();
 
         builder.Services.AddAuthentication()
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
+                    ClockSkew = TimeSpan.Zero,
+                };
+            })
             .AddOpenIdConnect("oidc", "Sign-in with demo.duendesoftware.com", options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -93,7 +120,10 @@ public static class HostingExtensions
                 };
             });
 
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "MedCore Auth API", Version = "v1" });
+        });
 
         return builder.Build();
     }
@@ -114,6 +144,8 @@ public static class HostingExtensions
 
         app.MapRazorPages()
             .RequireAuthorization();
+
+        app.MapControllers();
 
         return app;
     }

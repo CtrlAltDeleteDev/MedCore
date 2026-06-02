@@ -1,15 +1,9 @@
 ﻿using Duende.IdentityModel;
-using Duende.IdentityServer.EntityFramework.DbContexts;
-using Duende.IdentityServer.EntityFramework.Mappers;
-using Duende.IdentityServer.Models;
-using MedCore.Auth.IdentityServer;
 using MedCore.Auth.IdentityServer.Data;
 using MedCore.Auth.IdentityServer.Models;
 using MedCore.DatabaseMigrationJob.Configuration;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Security.Claims;
 
@@ -57,71 +51,68 @@ namespace MedCore.DatabaseMigrationJob
 
         private async Task EnsureSeedData(ApplicationDbContext context, UserManager<ApplicationUser> userMgr, CancellationToken cancellationToken)
         {
-            var alice = await userMgr.FindByNameAsync("alice");
-            if (alice == null)
+            await EnsureUserAsync(userMgr, "alice", "AliceSmith@example.com", new[]
             {
-                alice = new ApplicationUser
-                {
-                    UserName = "alice",
-                    Email = "AliceSmith@example.com",
-                    EmailConfirmed = true,
-                };
-                var result = await userMgr.CreateAsync(alice, "Pass123$");
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
+                new Claim(JwtClaimTypes.Name, "Alice Smith"),
+                new Claim(JwtClaimTypes.GivenName, "Alice"),
+                new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                new Claim(JwtClaimTypes.WebSite, "http://alice.example.com"),
+            });
 
-                result = userMgr.AddClaimsAsync(alice, new Claim[]{
-                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Alice"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                            new Claim(JwtClaimTypes.WebSite, "http://alice.example.com"),
-                        }).Result;
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
-                Log.Debug("alice created");
-            }
-            else
+            await EnsureUserAsync(userMgr, "bob", "BobSmith@example.com", new[]
             {
-                Log.Debug("alice already exists");
-            }
+                new Claim(JwtClaimTypes.Name, "Bob Smith"),
+                new Claim(JwtClaimTypes.GivenName, "Bob"),
+                new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                new Claim(JwtClaimTypes.WebSite, "http://bob.example.com"),
+                new Claim("location", "somewhere"),
+            });
 
-            var bob = await userMgr.FindByNameAsync("bob");
-            if (bob == null)
+            var patients = new[]
             {
-                bob = new ApplicationUser
-                {
-                    UserName = "bob",
-                    Email = "BobSmith@example.com",
-                    EmailConfirmed = true
-                };
-                var result = await userMgr.CreateAsync(bob, "Pass123$");
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
+                (id: 1, username: "patient1", email: "melnyk.olha@dental.local",       given: "Ольга",      family: "Мельник"),
+                (id: 2, username: "patient2", email: "kovalenko.ivan@dental.local",    given: "Іван",       family: "Коваленко"),
+                (id: 3, username: "patient3", email: "bondarenko.yulia@dental.local",  given: "Юлія",       family: "Бондаренко"),
+                (id: 4, username: "patient4", email: "tkachenko.dmytro@dental.local",  given: "Дмитро",     family: "Ткаченко"),
+                (id: 5, username: "patient5", email: "savchenko.anna@dental.local",    given: "Анна",       family: "Савченко"),
+                (id: 6, username: "patient6", email: "kravchenko.serhii@dental.local", given: "Сергій",     family: "Кравченко"),
+                (id: 7, username: "patient7", email: "lysenko.natalia@dental.local",   given: "Наталія",    family: "Лисенко"),
+                (id: 8, username: "patient8", email: "petrenko.mykola@dental.local",   given: "Микола",     family: "Петренко"),
+                (id: 9, username: "patient9", email: "moroz.oksana@dental.local",      given: "Оксана",     family: "Мороз"),
+            };
 
-                result = userMgr.AddClaimsAsync(bob, new Claim[]{
-                            new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Bob"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                            new Claim(JwtClaimTypes.WebSite, "http://bob.example.com"),
-                            new Claim("location", "somewhere")
-                        }).Result;
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
-                Log.Debug("bob created");
-            }
-            else
+            foreach (var p in patients)
             {
-                Log.Debug("bob already exists");
+                await EnsureUserAsync(userMgr, p.username, p.email, new[]
+                {
+                    new Claim(JwtClaimTypes.Name,       $"{p.given} {p.family}"),
+                    new Claim(JwtClaimTypes.GivenName,  p.given),
+                    new Claim(JwtClaimTypes.FamilyName, p.family),
+                    new Claim("patient_id",             p.id.ToString()),
+                });
+            }
+        }
+
+        private async Task EnsureUserAsync(UserManager<ApplicationUser> userMgr, string username, string email, Claim[] claims)
+        {
+            var user = await userMgr.FindByNameAsync(username);
+            if (user != null)
+            {
+                Log.Debug("{Username} already exists", username);
+                return;
             }
 
+            user = new ApplicationUser { UserName = username, Email = email, EmailConfirmed = true };
+
+            var result = await userMgr.CreateAsync(user, "Pass123$");
+            if (!result.Succeeded)
+                throw new Exception(result.Errors.First().Description);
+
+            result = await userMgr.AddClaimsAsync(user, claims);
+            if (!result.Succeeded)
+                throw new Exception(result.Errors.First().Description);
+
+            Log.Debug("{Username} created", username);
         }
 
     }
