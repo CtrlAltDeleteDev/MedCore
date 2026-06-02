@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
@@ -60,14 +61,7 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 
         private bool IsTimeSlotAvailable(DateTime start, DateTime end, List<Meet> docMeets)
         {
-            foreach (var meet in docMeets)
-            {
-                if (start < meet.EndTime && end > meet.StartTime)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return !docMeets.Any(meet => start < meet.EndTime && end > meet.StartTime);
         }
     }
 }
