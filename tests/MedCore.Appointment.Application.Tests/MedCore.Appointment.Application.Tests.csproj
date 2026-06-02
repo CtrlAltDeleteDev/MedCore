@@ -19,12 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\..\services\MedCore.Appointment\MedCore.Appointment.Application\MedCore.Appointment.Application.csproj" />
+    <ProjectReference Include="..\..\services\MedCore.Appointment\MedCore.Appoitment.Data\MedCore.Appoitment.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MedCore.Appointment.Application\MedCore.Appointment.Application.csproj" />
-    <ProjectReference Include="..\..\MedCore.Appoitment.Data\MedCore.Appoitment.Data.csproj" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>
