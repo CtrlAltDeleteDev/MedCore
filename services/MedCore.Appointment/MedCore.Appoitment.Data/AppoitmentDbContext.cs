@@ -43,6 +43,10 @@ namespace MedCore.Appoitment.Data
 
             builder.Entity<Meet>().Property(x => x.Subject).IsRequired().HasMaxLength(128);
             builder.Entity<Meet>().HasMany(e => e.Skills);
+
+            builder.Entity<Employee>().HasQueryFilter(x => x.IsActive);
+            builder.Entity<Meet>().HasQueryFilter(x => x.IsActive);
+            builder.Entity<Skill>().HasQueryFilter(x => x.IsActive);
         }
     }
 }
