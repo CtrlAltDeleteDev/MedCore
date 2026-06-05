@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MedCore.Appointment.Application\MedCore.Appointment.Application.csproj" />
+    <ProjectReference Include="..\MedCore.Appoitment.Data\MedCore.Appoitment.Data.csproj" />
+  </ItemGroup>
+
 </Project>

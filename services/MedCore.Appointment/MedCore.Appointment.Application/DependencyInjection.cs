@@ -21,5 +21,7 @@ namespace MedCore.Appointment.Application
             services.AddScoped<IValidator<CreateNewMeetCommand>, CreateNewMeetCommandValidator>();
             return services;
         }
+        
+        
     }
 }
