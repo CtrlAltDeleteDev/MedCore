@@ -24,7 +24,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MedCore.Appointment.Application\MedCore.Appointment.Application.csproj" />
 		<ProjectReference Include="..\MedCore.Appoitment.Data\MedCore.Appoitment.Data.csproj" />
-		<ProjectReference Include="..\MedCore.Appoitment.Infrastura\MedCore.Appoitment.Infrastura.csproj" />
+		<ProjectReference Include="..\MedCore.Appoitment.Infrastura\MedCore.Appoitment.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

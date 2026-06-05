@@ -7,7 +7,7 @@
     <Project Path="services/MedCore.Appointment/MedCore.Appointment.Api/MedCore.Appointment.Api.csproj" />
     <Project Path="services/MedCore.Appointment/MedCore.Appointment.Application/MedCore.Appointment.Application.csproj" />
     <Project Path="services/MedCore.Appointment/MedCore.Appoitment.Data/MedCore.Appoitment.Data.csproj" Id="1c44f1a3-600d-4359-8585-875b7f3fe468" />
-    <Project Path="services/MedCore.Appointment/MedCore.Appoitment.Infrastura/MedCore.Appoitment.Infrastura.csproj" Id="5341ae76-b0b1-4c1e-89fb-3a726c090fa8" />
+    <Project Path="services/MedCore.Appointment/MedCore.Appoitment.Infrastura/MedCore.Appoitment.Infrastructure.csproj" Id="5341ae76-b0b1-4c1e-89fb-3a726c090fa8" />
   </Folder>
   <Folder Name="/services/MedCore.Appointment/Integration/">
     <Project Path="services/MedCore.Appointment/Integration/MedCore.Appointment.DatabaseMigrationJob/MedCore.Appointment.DatabaseMigrationJob.csproj" Id="adbf744b-10a8-4987-9614-42728c460ad6" />

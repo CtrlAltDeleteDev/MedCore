@@ -1,7 +1,7 @@
 using MedCore.Appointment.Api;
 using MedCore.Appointment.Application;
 using MedCore.Appoitment.Data;
-using MedCore.Appoitment.Infrastura;
+using MedCore.Appoitment.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
