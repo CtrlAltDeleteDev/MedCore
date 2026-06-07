@@ -1,12 +1,37 @@
 ﻿using MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery;
 using MedCore.Appointment.Application.Tests.Helpers;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MedCore.Appointment.Application.Tests.Handlers
 {
     public class GetDoctorsBySkillQueryHandlerTests
     {
+        private static GetDoctorsBySkillQueryHandler BuildHandler(string dbName)
+        {
+            var db = DbContextFactory.Create(dbName);
+            return new(new EmployeeRepository(db), NullLogger<GetDoctorsBySkillQueryHandler>.Instance);
+        }
+
+        private static async Task SeedAsync(string dbName)
+        {
+            await using var db = DbContextFactory.Create(dbName);
+
+            var skillCaries   = new Skill { Id = 1, Name = "Caries Treatment", Description = "" };
+            var skillCleaning = new Skill { Id = 2, Name = "Cleaning",         Description = "" };
+
+            var doctor1 = new Employee { Id = 1, FullName = "Dr. A", Title = "Therapist", IsActive = true };
+            doctor1.Skills.Add(skillCaries);
+            doctor1.Skills.Add(skillCleaning);
+
+            var doctor2 = new Employee { Id = 2, FullName = "Dr. B", Title = "Surgeon", IsActive = true };
+            doctor2.Skills.Add(skillCaries);
+
+            db.AddRange(doctor1, doctor2);
+            await db.SaveChangesAsync();
+        }
+
         [Fact]
         public async Task Returns_all_doctors_with_given_skill()
         {
@@ -45,27 +70,6 @@ namespace MedCore.Appointment.Application.Tests.Handlers
 
             Assert.True(result.IsSuccess);
             Assert.Empty(result.Value!);
-        }
-
-        private static GetDoctorsBySkillQueryHandler BuildHandler(string dbName)
-            => new(DbContextFactory.Create(dbName), NullLogger<GetDoctorsBySkillQueryHandler>.Instance);
-
-        private static async Task SeedAsync(string dbName)
-        {
-            await using var db = DbContextFactory.Create(dbName);
-
-            var skillCaries = new Skill { Id = 1, Name = "Caries Treatment", Description = string.Empty };
-            var skillCleaning = new Skill { Id = 2, Name = "Cleaning", Description = string.Empty };
-
-            var doctor1 = new Employee { Id = 1, FullName = "Dr. A", Title = "Therapist", IsActive = true };
-            doctor1.Skills.Add(skillCaries);
-            doctor1.Skills.Add(skillCleaning);
-
-            var doctor2 = new Employee { Id = 2, FullName = "Dr. B", Title = "Surgeon", IsActive = true };
-            doctor2.Skills.Add(skillCaries);
-
-            db.AddRange(doctor1, doctor2);
-            await db.SaveChangesAsync();
         }
     }
 }

@@ -1,26 +1,28 @@
-﻿using MedCore.Appointment.Application.Common;
+using MedCore.Appointment.Application.Common;
 using MedCore.Appointment.Application.DTOs;
-using MedCore.Appoitment.Data;
+using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Data.Repositories;
+using MedCore.Appoitment.Data.Specifications;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery
 {
-    public class GetDoctorsBySkillQueryHandler(AppoitmentDbContext appoitmentDbContext, ILogger<GetDoctorsBySkillQueryHandler> logger) : IRequestHandler<GetDoctorsBySkillQuery, Result<EmployeeDto[]>>
+    public class GetDoctorsBySkillQueryHandler(IRepository<Employee> employeeRepository, ILogger<GetDoctorsBySkillQueryHandler> logger)
+        : IRequestHandler<GetDoctorsBySkillQuery, Result<EmployeeDto[]>>
     {
-        private readonly AppoitmentDbContext _appoitmentDbContext = appoitmentDbContext;
+        private readonly IRepository<Employee> _employeeRepository = employeeRepository;
         private readonly ILogger<GetDoctorsBySkillQueryHandler> _logger = logger;
 
         public async Task<Result<EmployeeDto[]>> Handle(GetDoctorsBySkillQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var employees = await _appoitmentDbContext.Employees.Where(x => x.Skills.Any(s => request.SkillIds.Contains(s.Id)))
-                    .Select(x => new EmployeeDto(x.Id, x.FullName, x.Title, x.Skills.Select(s => s.Id).ToArray()))
-                    .ToArrayAsync(cancellationToken);
+                var employees = await _employeeRepository.GetItemsAsync(
+                    new GetEmployeesBySkillIdsSpec(request.SkillIds), useAsNoTracking: true, cancellationToken);
 
-                return Result<EmployeeDto[]>.Ok(employees);
+                return Result<EmployeeDto[]>.Ok(
+                    employees.Select(x => new EmployeeDto(x.Id, x.FullName, x.Title, x.Skills.Select(s => s.Id).ToArray())).ToArray());
             }
             catch (Exception ex)
             {

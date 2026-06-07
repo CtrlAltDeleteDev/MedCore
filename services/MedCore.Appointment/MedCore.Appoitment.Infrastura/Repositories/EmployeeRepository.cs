@@ -14,6 +14,7 @@ public class EmployeeRepository(AppoitmentDbContext dbContext) : IRepository<Emp
     public async Task<IEnumerable<Employee>> GetItemsAsync(ISpecification<Employee> spec, bool useAsNoTracking = false,  CancellationToken cancellationToken = default)
     {
         var query = _dbContext.Employees
+            .Include(e => e.Skills)
             .Where(spec.Criteria);
 
         return await (useAsNoTracking ? query.AsNoTracking() : query).ToListAsync(cancellationToken);            
