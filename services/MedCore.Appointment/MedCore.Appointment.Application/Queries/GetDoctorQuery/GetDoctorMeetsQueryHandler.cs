@@ -1,34 +1,34 @@
-﻿using MedCore.Appointment.Application.Common;
+using MedCore.Appointment.Application.Common;
 using MedCore.Appointment.Application.DTOs;
-using MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery;
-using MedCore.Appoitment.Data;
+using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Data.Repositories;
+using MedCore.Appoitment.Data.Specifications;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Queries.GetDoctorQuery
 {
-    public class GetDoctorMeetsQueryHandler(AppoitmentDbContext appoitmentDbContext, ILogger<GetDoctorMeetsQueryHandler> logger) : IRequestHandler<GetDoctorMeetsQuery, Result<MeetsShortDto[]>>
+    public class GetDoctorMeetsQueryHandler(IRepository<Meet> meetRepository, ILogger<GetDoctorMeetsQueryHandler> logger)
+        : IRequestHandler<GetDoctorMeetsQuery, Result<MeetsShortDto[]>>
     {
-        private readonly AppoitmentDbContext _appoitmentDbContext = appoitmentDbContext;
+        private readonly IRepository<Meet> _meetRepository = meetRepository;
         private readonly ILogger<GetDoctorMeetsQueryHandler> _logger = logger;
 
         public async Task<Result<MeetsShortDto[]>> Handle(GetDoctorMeetsQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _appoitmentDbContext.Meets
-                    .Where(m => m.EmployeeId == request.doctorId && m.IsActive)
+                var meets = await _meetRepository.GetItemsAsync(
+                    new GetActiveMeetsByEmployeeIdSpec(request.doctorId), useAsNoTracking: true, cancellationToken);
+
+                var result = meets
                     .OrderBy(m => m.StartTime)
                     .Select(m => new MeetsShortDto(m.StartTime, m.EndTime))
-                    .ToArrayAsync(cancellationToken);
+                    .ToArray();
 
                 return Result<MeetsShortDto[]>.Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while getting doctor meets for doctor with id {DocId}", request.doctorId);
                 return Result<MeetsShortDto[]>.Fail("Error while getting doctor meets.");

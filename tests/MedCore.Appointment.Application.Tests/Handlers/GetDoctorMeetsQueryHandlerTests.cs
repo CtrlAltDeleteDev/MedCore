@@ -1,6 +1,7 @@
 using MedCore.Appointment.Application.Queries.GetDoctorQuery;
 using MedCore.Appointment.Application.Tests.Helpers;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MedCore.Appointment.Application.Tests.Handlers
@@ -8,7 +9,10 @@ namespace MedCore.Appointment.Application.Tests.Handlers
     public class GetDoctorMeetsQueryHandlerTests
     {
         private static GetDoctorMeetsQueryHandler BuildHandler(string dbName)
-            => new(DbContextFactory.Create(dbName), NullLogger<GetDoctorMeetsQueryHandler>.Instance);
+        {
+            var db = DbContextFactory.Create(dbName);
+            return new(new MeetRepository(db), NullLogger<GetDoctorMeetsQueryHandler>.Instance);
+        }
 
         private static async Task SeedAsync(string dbName)
         {

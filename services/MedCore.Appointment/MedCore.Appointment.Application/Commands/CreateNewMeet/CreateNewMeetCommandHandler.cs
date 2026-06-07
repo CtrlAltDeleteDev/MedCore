@@ -1,42 +1,39 @@
-﻿using MedCore.Appointment.Application.Common;
-using MedCore.Appointment.Application.DTOs;
-using MedCore.Appointment.Application.Queries.GetDoctorQuery;
-using MedCore.Appoitment.Data;
+using MedCore.Appointment.Application.Common;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Data.Repositories;
+using MedCore.Appoitment.Data.Specifications;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 {
-    public class CreateNewMeetCommandHandler(AppoitmentDbContext appoitmentDbContext, ILogger<CreateNewMeetCommandHandler> logger) : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
+    public class CreateNewMeetCommandHandler(
+        IRepository<Meet> meetRepository,
+        IRepository<Skill> skillRepository,
+        ILogger<CreateNewMeetCommandHandler> logger)
+        : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
     {
-        private readonly AppoitmentDbContext _appoitmentDbContext = appoitmentDbContext;
+        private readonly IRepository<Meet> _meetRepository = meetRepository;
+        private readonly IRepository<Skill> _skillRepository = skillRepository;
         private readonly ILogger<CreateNewMeetCommandHandler> _logger = logger;
 
         public async Task<Result<Unit>> Handle(CreateNewMeetCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var docMeets = await _appoitmentDbContext.Meets.Where(m => m.EmployeeId == request.DocId).ToListAsync(cancellationToken);
+                var docMeets = (await _meetRepository.GetItemsAsync(
+                    new GetMeetsByEmployeeIdSpec(request.DocId), cancellationToken: cancellationToken)).ToList();
 
                 if (!IsTimeSlotAvailable(request.StartDateTime, request.EndDateTime, docMeets))
-                {
                     return Result<Unit>.Fail("The selected time slot is not available for the doctor.");
-                }
 
-                var skills = await _appoitmentDbContext.Skills.Where(s => request.SkillIds.Contains(s.Id)).ToListAsync(cancellationToken);
+                var skills = (await _skillRepository.GetItemsAsync(
+                    new GetSkillsByIdsSpec(request.SkillIds), cancellationToken: cancellationToken));
 
-                if (skills.Count != request.SkillIds.Length)
-                {
+                if (skills.Count() != request.SkillIds.Length)
                     return Result<Unit>.Fail("One or more selected skills are invalid.");
-                }
 
-                var newSchedule = new Meet()
+                var newSchedule = new Meet
                 {
                     Subject = string.Join(", ", skills.Select(s => s.Name)),
                     StartTime = request.StartDateTime,
@@ -46,13 +43,10 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
                     SkillIds = request.SkillIds,
                 };
 
-                _appoitmentDbContext.Meets.Add(newSchedule);
-
-                await _appoitmentDbContext.SaveChangesAsync(cancellationToken);               
-
+                await _meetRepository.Add(newSchedule, cancellationToken);
                 return Result<Unit>.Ok(Unit.Value);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while creating new meet for doctor with id {DocId}", request.DocId);
                 return Result<Unit>.Fail("An error occurred while creating the meet.");
@@ -60,8 +54,6 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
         }
 
         private bool IsTimeSlotAvailable(DateTime start, DateTime end, List<Meet> docMeets)
-        {
-            return !docMeets.Any(meet => start < meet.EndTime && end > meet.StartTime);
-        }
+            => !docMeets.Any(meet => start < meet.EndTime && end > meet.StartTime);
     }
 }

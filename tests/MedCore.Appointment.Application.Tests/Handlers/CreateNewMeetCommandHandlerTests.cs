@@ -1,6 +1,7 @@
 using MedCore.Appointment.Application.Commands.CreateNewMeet;
 using MedCore.Appointment.Application.Tests.Helpers;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MedCore.Appointment.Application.Tests.Handlers
@@ -8,7 +9,10 @@ namespace MedCore.Appointment.Application.Tests.Handlers
     public class CreateNewMeetCommandHandlerTests
     {
         private static CreateNewMeetCommandHandler BuildHandler(string dbName)
-            => new(DbContextFactory.Create(dbName), NullLogger<CreateNewMeetCommandHandler>.Instance);
+        {
+            var db = DbContextFactory.Create(dbName);
+            return new(new MeetRepository(db), new SkillRepository(db), NullLogger<CreateNewMeetCommandHandler>.Instance);
+        }
 
         private static CreateNewMeetCommand BaseCommand(int docId, int skillId) => new(
             DocId: docId,

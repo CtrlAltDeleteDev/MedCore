@@ -1,6 +1,7 @@
 using MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery;
 using MedCore.Appointment.Application.Tests.Helpers;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MedCore.Appointment.Application.Tests.Handlers
@@ -8,7 +9,10 @@ namespace MedCore.Appointment.Application.Tests.Handlers
     public class GetDoctorsBySkillQueryHandlerTests
     {
         private static GetDoctorsBySkillQueryHandler BuildHandler(string dbName)
-            => new(DbContextFactory.Create(dbName), NullLogger<GetDoctorsBySkillQueryHandler>.Instance);
+        {
+            var db = DbContextFactory.Create(dbName);
+            return new(new EmployeeRepository(db), NullLogger<GetDoctorsBySkillQueryHandler>.Instance);
+        }
 
         private static async Task SeedAsync(string dbName)
         {
