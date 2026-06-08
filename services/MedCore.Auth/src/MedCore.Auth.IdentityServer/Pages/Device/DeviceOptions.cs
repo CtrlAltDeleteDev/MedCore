@@ -1,4 +1,4 @@
-namespace MedCore.Auth.IdentityServer.Pages.Device;
+﻿namespace MedCore.Auth.IdentityServer.Pages.Device;
 
 public static class DeviceOptions
 {

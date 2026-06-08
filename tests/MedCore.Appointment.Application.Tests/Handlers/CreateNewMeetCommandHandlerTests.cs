@@ -1,4 +1,4 @@
-using MedCore.Appointment.Application.Commands.CreateNewMeet;
+﻿using MedCore.Appointment.Application.Commands.CreateNewMeet;
 using MedCore.Appointment.Application.Tests.Helpers;
 using MedCore.Appoitment.Data.Entities;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -7,45 +7,7 @@ namespace MedCore.Appointment.Application.Tests.Handlers
 {
     public class CreateNewMeetCommandHandlerTests
     {
-        private static CreateNewMeetCommandHandler BuildHandler(string dbName)
-            => new(DbContextFactory.Create(dbName), NullLogger<CreateNewMeetCommandHandler>.Instance);
-
-        private static CreateNewMeetCommand BaseCommand(int docId, int skillId) => new(
-            DocId: docId,
-            StartDateTime: DateTime.UtcNow.AddDays(1),
-            EndDateTime: DateTime.UtcNow.AddDays(1).AddHours(1),
-            PatientId: 3,
-            SkillIds: new[] { skillId });
-
-        // --- helpers ---
-
-        private static async Task SeedAsync(string dbName, int docId, int skillId)
-        {
-            await using var db = DbContextFactory.Create(dbName);
-            db.Set<Skill>().Add(new Skill { Id = skillId, Name = "Test Skill", Description = "desc" });
-            db.Set<Employee>().Add(new Employee { Id = docId, FullName = "Dr. Test", Title = "Doctor", IsActive = true });
-            await db.SaveChangesAsync();
-        }
-
-        private static async Task SeedWithMeetAsync(string dbName, int docId, int skillId,
-            DateTime start, DateTime end)
-        {
-            await using var db = DbContextFactory.Create(dbName);
-            var skill = new Skill { Id = skillId, Name = "Test Skill", Description = "desc" };
-            db.Add(skill);
-            await db.SaveChangesAsync();
-
-            db.Add(new Meet
-            {
-                EmployeeId = docId, PatientId = 99,
-                Subject = "existing", SkillIds = new[] { skillId },
-                StartTime = start, EndTime = end
-            });
-            await db.SaveChangesAsync();
-        }
-
         // --- tests ---
-
         [Fact]
         public async Task Creates_meet_when_slot_is_free()
         {
@@ -149,6 +111,49 @@ namespace MedCore.Appointment.Application.Tests.Handlers
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
+        }
+
+        private static CreateNewMeetCommandHandler BuildHandler(string dbName)
+            => new(DbContextFactory.Create(dbName), NullLogger<CreateNewMeetCommandHandler>.Instance);
+
+        private static CreateNewMeetCommand BaseCommand(int docId, int skillId) => new(
+        DocId: docId,
+        StartDateTime: DateTime.UtcNow.AddDays(1),
+        EndDateTime: DateTime.UtcNow.AddDays(1).AddHours(1),
+        PatientId: 3,
+        SkillIds: new[] { skillId });
+
+        // --- helpers ---
+        private static async Task SeedAsync(string dbName, int docId, int skillId)
+        {
+            await using var db = DbContextFactory.Create(dbName);
+            db.Set<Skill>().Add(new Skill { Id = skillId, Name = "Test Skill", Description = "desc" });
+            db.Set<Employee>().Add(new Employee { Id = docId, FullName = "Dr. Test", Title = "Doctor", IsActive = true });
+            await db.SaveChangesAsync();
+        }
+
+        private static async Task SeedWithMeetAsync(
+            string dbName,
+            int docId,
+            int skillId,
+            DateTime start,
+            DateTime end)
+        {
+            await using var db = DbContextFactory.Create(dbName);
+            var skill = new Skill { Id = skillId, Name = "Test Skill", Description = "desc" };
+            db.Add(skill);
+            await db.SaveChangesAsync();
+
+            db.Add(new Meet
+            {
+                EmployeeId = docId,
+                PatientId = 99,
+                Subject = "existing",
+                SkillIds = new[] { skillId },
+                StartTime = start,
+                EndTime = end
+            });
+            await db.SaveChangesAsync();
         }
     }
 }

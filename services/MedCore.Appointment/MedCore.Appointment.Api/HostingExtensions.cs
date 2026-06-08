@@ -1,10 +1,12 @@
-﻿using MedCore.Appoitment.Data;
+﻿using System.Globalization;
+using System.Text;
+using FluentValidation;
+using MedCore.Appointment.Api.Options;
+using MedCore.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.Text;
 using Serilog;
-using System.Globalization;
 using Serilog.Filters;
 
 namespace MedCore.Appointment.Api
@@ -38,7 +40,8 @@ namespace MedCore.Appointment.Api
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "MedCore Appointment API", Version = "v1" });
 
-                var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory,
+                var xmlPath = System.IO.Path.Combine(
+                    AppContext.BaseDirectory,
                     $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 options.IncludeXmlComments(xmlPath);
 
@@ -56,6 +59,10 @@ namespace MedCore.Appointment.Api
                 });
             });
 
+            services.AddSingleton<IValidator<ConnectionStringOptions>, ConnectionStringOptionsValidator>();
+
+            services.AddOptionsWithValidation<ConnectionStringOptions>(ConnectionStringOptions.SectionName);
+
             return services;
         }
 
@@ -66,6 +73,7 @@ namespace MedCore.Appointment.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -92,11 +100,13 @@ namespace MedCore.Appointment.Api
                     lc.WriteTo.Logger(fileLogger =>
                     {
                         fileLogger
-                            .WriteTo.File("./diagnostics/diagnostic.log", rollingInterval: RollingInterval.Day,
-                                fileSizeLimitBytes: 1024 * 1024 * 10, // 10 MB
-                                rollOnFileSizeLimit: true,
-                                outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-                                formatProvider: CultureInfo.InvariantCulture)
+                            .WriteTo.File(
+                            "./diagnostics/diagnostic.log",
+                            rollingInterval: RollingInterval.Day,
+                            fileSizeLimitBytes: 1024 * 1024 * 10, // 10 MB
+                            rollOnFileSizeLimit: true,
+                            outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                            formatProvider: CultureInfo.InvariantCulture)
                             .Filter
                             .ByIncludingOnly(Matching.FromSource("Duende.IdentityServer.Diagnostics.Summary"));
                     }).Enrich.FromLogContext().ReadFrom.Configuration(builder.Configuration);
@@ -104,6 +114,5 @@ namespace MedCore.Appointment.Api
             });
             return builder;
         }
-
     }
 }

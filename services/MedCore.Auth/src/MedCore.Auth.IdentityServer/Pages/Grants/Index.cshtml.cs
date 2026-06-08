@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Events;
+﻿using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
@@ -17,7 +17,8 @@ public class Index : PageModel
     private readonly IResourceStore _resources;
     private readonly IEventService _events;
 
-    public Index(IIdentityServerInteractionService interaction,
+    public Index(
+        IIdentityServerInteractionService interaction,
         IClientStore clients,
         IResourceStore resources,
         IEventService events)
@@ -28,7 +29,10 @@ public class Index : PageModel
         _events = events;
     }
 
-    public ViewModel View { get; set; } = default!;
+    public ViewModel View { get; set; } = null!;
+
+    [BindProperty]
+    public string? ClientId { get; set; }
 
     public async Task OnGet()
     {
@@ -64,9 +68,6 @@ public class Index : PageModel
             Grants = list
         };
     }
-
-    [BindProperty]
-    public string? ClientId { get; set; }
 
     public async Task<IActionResult> OnPost()
     {

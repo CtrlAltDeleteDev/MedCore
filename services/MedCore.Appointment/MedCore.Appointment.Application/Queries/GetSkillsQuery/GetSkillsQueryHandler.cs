@@ -1,14 +1,9 @@
 ﻿using MedCore.Appointment.Application.Common;
 using MedCore.Appointment.Application.DTOs;
 using MedCore.Appoitment.Data;
-using MedCore.Appoitment.Data.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Queries.GetSkillsQuery
 {
@@ -28,7 +23,7 @@ namespace MedCore.Appointment.Application.Queries.GetSkillsQuery
 
                 return Result<SkillDto[]>.Ok(skills);
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError("Error while fetching skills: {Message}", ex.Message);
                 return Result<SkillDto[]>.Fail("Error while fetching skills");

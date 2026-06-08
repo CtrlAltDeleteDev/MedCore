@@ -1,22 +1,22 @@
 ﻿using MedCore.Appointment.Application.Common;
-using MedCore.Appointment.Application.DTOs;
-using MedCore.Appointment.Application.Queries.GetDoctorQuery;
 using MedCore.Appoitment.Data;
 using MedCore.Appoitment.Data.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 {
-    public class CreateNewMeetCommandHandler(AppoitmentDbContext appoitmentDbContext, ILogger<CreateNewMeetCommandHandler> logger) : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
+    public class CreateNewMeetCommandHandler : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
     {
-        private readonly AppoitmentDbContext _appoitmentDbContext = appoitmentDbContext;
-        private readonly ILogger<CreateNewMeetCommandHandler> _logger = logger;
+        private readonly AppoitmentDbContext _appoitmentDbContext;
+        private readonly ILogger<CreateNewMeetCommandHandler> _logger;
+
+        public CreateNewMeetCommandHandler(AppoitmentDbContext appoitmentDbContext, ILogger<CreateNewMeetCommandHandler> logger)
+        {
+            _appoitmentDbContext = appoitmentDbContext;
+            _logger = logger;
+        }
 
         public async Task<Result<Unit>> Handle(CreateNewMeetCommand request, CancellationToken cancellationToken)
         {
@@ -48,11 +48,11 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 
                 _appoitmentDbContext.Meets.Add(newSchedule);
 
-                await _appoitmentDbContext.SaveChangesAsync(cancellationToken);               
+                await _appoitmentDbContext.SaveChangesAsync(cancellationToken);
 
                 return Result<Unit>.Ok(Unit.Value);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while creating new meet for doctor with id {DocId}", request.DocId);
                 return Result<Unit>.Fail("An error occurred while creating the meet.");

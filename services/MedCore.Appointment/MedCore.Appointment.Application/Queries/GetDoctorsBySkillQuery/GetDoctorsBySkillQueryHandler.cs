@@ -4,9 +4,6 @@ using MedCore.Appoitment.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery
 {
@@ -25,7 +22,7 @@ namespace MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery
 
                 return Result<EmployeeDto[]>.Ok(employees);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching doctors by skill.");
                 return Result<EmployeeDto[]>.Fail("An error occurred while fetching doctors by skill.");

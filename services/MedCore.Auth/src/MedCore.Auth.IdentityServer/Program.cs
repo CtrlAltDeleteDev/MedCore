@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using Duende.IdentityServer.Licensing;
 using MedCore.Auth.IdentityServer;
@@ -15,7 +15,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     var app = (builder
-        .ConfigureLogging() as WebApplicationBuilder)
+            .ConfigureLogging() as WebApplicationBuilder)!
         .ConfigureServices()
         .ConfigurePipeline();
 

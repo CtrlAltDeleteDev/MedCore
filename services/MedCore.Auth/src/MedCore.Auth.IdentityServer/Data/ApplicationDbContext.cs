@@ -1,4 +1,4 @@
-using MedCore.Auth.IdentityServer.Models;
+﻿using MedCore.Auth.IdentityServer.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +11,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder builder) 
-    {         
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("Identity");
     }

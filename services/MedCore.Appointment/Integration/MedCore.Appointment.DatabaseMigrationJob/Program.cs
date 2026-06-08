@@ -1,7 +1,7 @@
 ﻿using MedCore.Appointment.Api;
 using MedCore.Appointment.DatabaseMigrationJob;
+using MedCore.Appointment.DatabaseMigrationJob.Configuration;
 using MedCore.Appoitment.Data;
-using MedCore.DatabaseMigrationJob.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

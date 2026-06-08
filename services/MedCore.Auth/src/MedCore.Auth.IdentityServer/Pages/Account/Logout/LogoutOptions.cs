@@ -1,4 +1,4 @@
-namespace MedCore.Auth.IdentityServer.Pages.Account.Logout;
+﻿namespace MedCore.Auth.IdentityServer.Pages.Account.Logout;
 
 public static class LogoutOptions
 {

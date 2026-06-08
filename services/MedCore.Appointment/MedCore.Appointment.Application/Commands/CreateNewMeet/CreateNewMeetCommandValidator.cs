@@ -1,15 +1,12 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 {
-    public class CreateNewMeetCommandValidator :AbstractValidator<CreateNewMeetCommand>
+    public class CreateNewMeetCommandValidator : AbstractValidator<CreateNewMeetCommand>
     {
         public CreateNewMeetCommandValidator()
         {
-            RuleFor(x=>x.DocId)
+            RuleFor(x => x.DocId)
                 .NotEmpty()
                 .NotNull()
                 .GreaterThan(0)

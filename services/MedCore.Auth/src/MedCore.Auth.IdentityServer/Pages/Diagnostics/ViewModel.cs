@@ -1,4 +1,4 @@
-using System.Buffers.Text;
+﻿using System.Buffers.Text;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
@@ -21,9 +21,11 @@ public class ViewModel
                 return;
             }
         }
+
         Clients = Enumerable.Empty<string>();
     }
 
     public AuthenticateResult AuthenticateResult { get; }
+
     public IEnumerable<string> Clients { get; }
 }

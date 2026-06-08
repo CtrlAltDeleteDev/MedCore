@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MedCore.Auth.IdentityServer.Configuration;
 using MedCore.Auth.IdentityServer.Controllers.Api;
@@ -26,13 +26,23 @@ public sealed class AuthControllerTests
     {
         _userManager = Substitute.For<UserManager<ApplicationUser>>(
             Substitute.For<IUserStore<ApplicationUser>>(),
-            null, null, null, null, null, null, null, null);
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
 
         _signInManager = Substitute.For<SignInManager<ApplicationUser>>(
             _userManager,
             Substitute.For<IHttpContextAccessor>(),
             Substitute.For<IUserClaimsPrincipalFactory<ApplicationUser>>(),
-            null, null, null, null);
+            null,
+            null,
+            null,
+            null);
 
         _jwtSettings = new JwtSettings
         {
@@ -175,6 +185,9 @@ public sealed class AuthControllerTests
     private static ApplicationUser BuildUser(string username, string id = "user-id", string email = "user@test.com") =>
         new() { Id = id, UserName = username, Email = email };
 
+    private static JwtSecurityToken ReadToken(LoginResponse response) =>
+        new JwtSecurityTokenHandler().ReadJwtToken(response.AccessToken);
+
     private void SetupSuccessfulLogin(ApplicationUser user, string password, IList<string> roles)
     {
         _userManager.FindByNameAsync(user.UserName!).Returns(Task.FromResult<ApplicationUser?>(user));
@@ -182,7 +195,4 @@ public sealed class AuthControllerTests
             .Returns(Task.FromResult(IdentitySignInResult.Success));
         _userManager.GetRolesAsync(user).Returns(Task.FromResult(roles));
     }
-
-    private static JwtSecurityToken ReadToken(LoginResponse response) =>
-        new JwtSecurityTokenHandler().ReadJwtToken(response.AccessToken);
 }

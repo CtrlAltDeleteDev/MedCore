@@ -48,7 +48,9 @@ namespace MedCore.Appointment.Api.Controllers
             var query = new GetDoctorsBySkillQuery(skillIds);
             var validationResult = _getDocBySkillsValidator.Validate(query);
             if (!validationResult.IsValid)
+            {
                 return BadRequest(validationResult.Errors);
+            }
 
             var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
@@ -66,7 +68,9 @@ namespace MedCore.Appointment.Api.Controllers
             var query = new GetDoctorMeetsQuery(doctorId);
             var validationResult = _getDocMeetsValidator.Validate(query);
             if (!validationResult.IsValid)
+            {
                 return BadRequest(validationResult.Errors);
+            }
 
             var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
@@ -87,7 +91,9 @@ namespace MedCore.Appointment.Api.Controllers
 
             var validationResult = _createNewMeetValidator.Validate(command);
             if (!validationResult.IsValid)
+            {
                 return BadRequest(validationResult.Errors);
+            }
 
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Created() : BadRequest(result.Error);

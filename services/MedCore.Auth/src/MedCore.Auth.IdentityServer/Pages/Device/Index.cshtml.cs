@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Configuration;
+﻿using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
@@ -44,7 +44,7 @@ public class Index : PageModel
 
         if (!await SetViewModelAsync(userCode))
         {
-            ModelState.AddModelError("", DeviceOptions.InvalidUserCode);
+            ModelState.AddModelError(string.Empty, DeviceOptions.InvalidUserCode);
             return Page();
         }
 
@@ -78,6 +78,7 @@ public class Index : PageModel
             await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
             Telemetry.Metrics.ConsentDenied(request.Client.ClientId, request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName));
         }
+
         // user clicked 'yes' - validate the data
         else if (Input.Button == "yes")
         {
@@ -105,12 +106,12 @@ public class Index : PageModel
             }
             else
             {
-                ModelState.AddModelError("", ConsentOptions.MustChooseOneErrorMessage);
+                ModelState.AddModelError(string.Empty, ConsentOptions.MustChooseOneErrorMessage);
             }
         }
         else
         {
-            ModelState.AddModelError("", ConsentOptions.InvalidSelectionErrorMessage);
+            ModelState.AddModelError(string.Empty, ConsentOptions.InvalidSelectionErrorMessage);
         }
 
         if (grantedConsent != null)
@@ -127,9 +128,40 @@ public class Index : PageModel
         {
             return RedirectToPage("/Home/Error/Index");
         }
+
         return Page();
     }
 
+    private static ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check) => new ScopeViewModel
+    {
+        Value = identity.Name,
+        DisplayName = identity.DisplayName ?? identity.Name,
+        Description = identity.Description,
+        Emphasize = identity.Emphasize,
+        Required = identity.Required,
+        Checked = check || identity.Required
+    };
+
+    private static ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check) => new ScopeViewModel
+    {
+        Value = parsedScopeValue.RawValue,
+
+        // todo: use the parsed scope value in the display?
+        DisplayName = apiScope.DisplayName ?? apiScope.Name,
+        Description = apiScope.Description,
+        Emphasize = apiScope.Emphasize,
+        Required = apiScope.Required,
+        Checked = check || apiScope.Required
+    };
+
+    private static ScopeViewModel GetOfflineAccessScope(bool check) => new ScopeViewModel
+    {
+        Value = Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
+        DisplayName = DeviceOptions.OfflineAccessDisplayName,
+        Description = DeviceOptions.OfflineAccessDescription,
+        Emphasize = true,
+        Checked = check
+    };
 
     private async Task<bool> SetViewModelAsync(string userCode)
     {
@@ -168,42 +200,14 @@ public class Index : PageModel
                 apiScopes.Add(scopeVm);
             }
         }
+
         if (DeviceOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess)
         {
             apiScopes.Add(GetOfflineAccessScope(Input == null || Input.ScopesConsented.Contains(Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess)));
         }
+
         vm.ApiScopes = apiScopes;
 
         return vm;
     }
-
-    private static ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check) => new ScopeViewModel
-    {
-        Value = identity.Name,
-        DisplayName = identity.DisplayName ?? identity.Name,
-        Description = identity.Description,
-        Emphasize = identity.Emphasize,
-        Required = identity.Required,
-        Checked = check || identity.Required
-    };
-
-    private static ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check) => new ScopeViewModel
-    {
-        Value = parsedScopeValue.RawValue,
-        // todo: use the parsed scope value in the display?
-        DisplayName = apiScope.DisplayName ?? apiScope.Name,
-        Description = apiScope.Description,
-        Emphasize = apiScope.Emphasize,
-        Required = apiScope.Required,
-        Checked = check || apiScope.Required
-    };
-
-    private static ScopeViewModel GetOfflineAccessScope(bool check) => new ScopeViewModel
-    {
-        Value = Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
-        DisplayName = DeviceOptions.OfflineAccessDisplayName,
-        Description = DeviceOptions.OfflineAccessDescription,
-        Emphasize = true,
-        Checked = check
-    };
 }

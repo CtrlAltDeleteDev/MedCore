@@ -1,4 +1,4 @@
-using MedCore.Appoitment.Data;
+﻿using MedCore.Appoitment.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;

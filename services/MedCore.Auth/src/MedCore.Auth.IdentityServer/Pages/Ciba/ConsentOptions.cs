@@ -1,4 +1,4 @@
-namespace MedCore.Auth.IdentityServer.Pages.Ciba;
+﻿namespace MedCore.Auth.IdentityServer.Pages.Ciba;
 
 public static class ConsentOptions
 {

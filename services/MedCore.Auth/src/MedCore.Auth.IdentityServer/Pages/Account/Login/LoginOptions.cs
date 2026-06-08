@@ -1,4 +1,4 @@
-namespace MedCore.Auth.IdentityServer.Pages.Account.Login;
+﻿namespace MedCore.Auth.IdentityServer.Pages.Account.Login;
 
 public static class LoginOptions
 {

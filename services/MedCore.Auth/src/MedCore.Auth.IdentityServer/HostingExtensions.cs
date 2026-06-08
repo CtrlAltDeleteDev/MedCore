@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using Duende.IdentityServer;
 using MedCore.Auth.IdentityServer.Configuration;
@@ -37,7 +37,9 @@ public static class HostingExtensions
                 lc.WriteTo.Logger(fileLogger =>
                 {
                     fileLogger
-                        .WriteTo.File("./diagnostics/diagnostic.log", rollingInterval: RollingInterval.Day,
+                        .WriteTo.File(
+                            "./diagnostics/diagnostic.log",
+                            rollingInterval: RollingInterval.Day,
                             fileSizeLimitBytes: 1024 * 1024 * 10, // 10 MB
                             rollOnFileSizeLimit: true,
                             outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
@@ -56,10 +58,11 @@ public static class HostingExtensions
         builder.Services.AddControllers();
 
         var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
-        if(jwtSettingsSection is null)
+        if (jwtSettingsSection is null)
         {
             throw new InvalidOperationException("JwtSettings configuration section is missing.");
         }
+
         builder.Services.Configure<JwtSettings>(jwtSettingsSection);
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>

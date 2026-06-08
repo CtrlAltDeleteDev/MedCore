@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/common/">
+    <Project Path="common/MedCore.Validation/MedCore.Validation.csproj" />
+  </Folder>
   <Folder Name="/host/">
     <Project Path="services/MedCore.Auth/host/MedCore.Auth.AppHost/MedCore.AppHost.csproj" />
   </Folder>
@@ -17,6 +20,11 @@
   </Folder>
   <Folder Name="/services/MedCore.Auth/Integration/">
     <Project Path="services/MedCore.Auth/src/MedCore.DatabaseMigrationJob/MedCore.DatabaseMigrationJob.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="stylecop.ruleset" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/MedCore.Appointment.Application.Tests/MedCore.Appointment.Application.Tests.csproj" />

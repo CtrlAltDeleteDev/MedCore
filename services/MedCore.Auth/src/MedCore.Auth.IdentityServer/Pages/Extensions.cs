@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Models;
+﻿using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,7 +14,7 @@ public static class Extensions
     {
         var provider = context.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
         var handler = await provider.GetHandlerAsync(context, scheme);
-        return (handler is IAuthenticationSignOutHandler);
+        return handler is IAuthenticationSignOutHandler;
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ public static class Extensions
     internal static IActionResult LoadingPage(this PageModel page, string? redirectUri)
     {
         page.HttpContext.Response.StatusCode = 200;
-        page.HttpContext.Response.Headers.Location = "";
+        page.HttpContext.Response.Headers.Location = string.Empty;
 
         return page.RedirectToPage("/Redirect/Index", new { RedirectUri = redirectUri });
     }
