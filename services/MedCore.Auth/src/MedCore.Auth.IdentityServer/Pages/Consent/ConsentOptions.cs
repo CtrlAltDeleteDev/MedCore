@@ -1,4 +1,4 @@
-namespace MedCore.Auth.IdentityServer.Pages.Consent;
+﻿namespace MedCore.Auth.IdentityServer.Pages.Consent;
 
 public static class ConsentOptions
 {

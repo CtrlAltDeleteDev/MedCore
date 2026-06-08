@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,5 +14,6 @@ public class Index : PageModel
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion.Split('+').First()
             ?? "unavailable";
+
     public IdentityServerLicense? License { get; }
 }

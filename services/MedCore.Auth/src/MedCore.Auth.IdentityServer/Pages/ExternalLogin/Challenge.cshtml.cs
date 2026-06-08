@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Services;
+﻿using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ public class Challenge : PageModel
             throw new ArgumentException("invalid return URL");
         }
 
-        // start challenge and roundtrip the return URL and scheme 
+        // start challenge and roundtrip the return URL and scheme
         var props = new AuthenticationProperties
         {
             RedirectUri = Url.Page("/externallogin/callback"),

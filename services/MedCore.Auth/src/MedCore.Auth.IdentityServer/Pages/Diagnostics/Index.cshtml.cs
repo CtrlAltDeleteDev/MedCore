@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,7 +13,7 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        //Replace with an authorization policy check
+        // Replace with an authorization policy check
         if (HttpContext.Connection.IsRemote())
         {
             return NotFound();

@@ -1,4 +1,4 @@
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
@@ -23,11 +23,6 @@ public class Index : PageModel
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IIdentityProviderStore _identityProviderStore;
 
-    public ViewModel View { get; set; } = default!;
-
-    [BindProperty]
-    public InputModel Input { get; set; } = default!;
-
     public Index(
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
@@ -43,6 +38,11 @@ public class Index : PageModel
         _identityProviderStore = identityProviderStore;
         _events = events;
     }
+
+    public ViewModel View { get; set; } = default!;
+
+    [BindProperty]
+    public InputModel Input { get; set; } = default!;
 
     public async Task<IActionResult> OnGet(string? returnUrl)
     {
@@ -70,7 +70,7 @@ public class Index : PageModel
                 // This "can't happen", because if the ReturnUrl was null, then the context would be null
                 ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
 
-                // if the user cancels, send a result back into IdentityServer as if they 
+                // if the user cancels, send a result back into IdentityServer as if they
                 // denied the consent (even if this client does not require consent).
                 // this will send back an access denied OIDC error response to the client.
                 await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
@@ -183,21 +183,16 @@ public class Index : PageModel
 
         var providers = schemes
             .Where(x => x.DisplayName != null)
-            .Select(x => new ViewModel.ExternalProvider
-            (
+            .Select(x => new ViewModel.ExternalProvider(
                 authenticationScheme: x.Name,
-                displayName: x.DisplayName ?? x.Name
-            )).ToList();
+                displayName: x.DisplayName ?? x.Name)).ToList();
 
         var dynamicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync())
             .Where(x => x.Enabled)
-            .Select(x => new ViewModel.ExternalProvider
-            (
+            .Select(x => new ViewModel.ExternalProvider(
                 authenticationScheme: x.Scheme,
-                displayName: x.DisplayName ?? x.Scheme
-            ));
+                displayName: x.DisplayName ?? x.Scheme));
         providers.AddRange(dynamicSchemes);
-
 
         var allowLocal = true;
         var client = context?.Client;

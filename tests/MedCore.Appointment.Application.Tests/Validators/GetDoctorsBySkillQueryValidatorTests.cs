@@ -1,4 +1,4 @@
-using MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery;
+﻿using MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery;
 
 namespace MedCore.Appointment.Application.Tests.Validators
 {

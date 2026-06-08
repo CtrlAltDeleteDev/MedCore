@@ -1,4 +1,4 @@
-using Duende.IdentityModel;
+﻿using Duende.IdentityModel;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
@@ -19,15 +19,15 @@ public class Index : PageModel
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
 
-    [BindProperty]
-    public string? LogoutId { get; set; }
-
     public Index(SignInManager<ApplicationUser> signInManager, IIdentityServerInteractionService interaction, IEventService events)
     {
         _signInManager = signInManager;
         _interaction = interaction;
         _events = events;
     }
+
+    [BindProperty]
+    public string? LogoutId { get; set; }
 
     public async Task<IActionResult> OnGet(string? logoutId)
     {

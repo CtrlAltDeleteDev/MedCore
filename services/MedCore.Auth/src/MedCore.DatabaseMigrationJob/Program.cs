@@ -19,10 +19,11 @@ internal class Program
         builder.Configuration.AddJsonFile("appsettings.json")
             .AddEnvironmentVariables();
         var settings = builder.Configuration.Get<Settings>();
-        if(settings is null )
+        if (settings is null)
         {
             throw new InvalidOperationException("Settings configuration is missing.");
         }
+
         builder.Services.AddSingleton<Settings>(settings);
 
         builder.Logging.ClearProviders();

@@ -1,15 +1,15 @@
-﻿using Duende.IdentityModel;
+﻿using System.Security.Claims;
+using Duende.IdentityModel;
 using MedCore.Auth.IdentityServer.Data;
 using MedCore.Auth.IdentityServer.Models;
 using MedCore.DatabaseMigrationJob.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Security.Claims;
 
 namespace MedCore.DatabaseMigrationJob
 {
-    public class MigrationWorker
+    internal class MigrationWorker
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly ILogger _logger;
@@ -106,14 +106,17 @@ namespace MedCore.DatabaseMigrationJob
 
             var result = await userMgr.CreateAsync(user, "Pass123$");
             if (!result.Succeeded)
+            {
                 throw new Exception(result.Errors.First().Description);
+            }
 
             result = await userMgr.AddClaimsAsync(user, claims);
             if (!result.Succeeded)
+            {
                 throw new Exception(result.Errors.First().Description);
+            }
 
             Log.Debug("{Username} created", username);
         }
-
     }
 }

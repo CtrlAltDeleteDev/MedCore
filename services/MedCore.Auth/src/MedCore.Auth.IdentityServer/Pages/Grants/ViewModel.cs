@@ -1,19 +1,29 @@
-namespace MedCore.Auth.IdentityServer.Pages.Grants;
+﻿namespace MedCore.Auth.IdentityServer.Pages.Grants;
 
 public class ViewModel
 {
     public IEnumerable<GrantViewModel> Grants { get; set; } = Enumerable.Empty<GrantViewModel>();
 }
 
+ #pragma warning disable SA1402
 public class GrantViewModel
+ #pragma warning restore SA1402
 {
     public string? ClientId { get; set; }
+
     public string? ClientName { get; set; }
+
     public string? ClientUrl { get; set; }
+
     public string? ClientLogoUrl { get; set; }
+
     public string? Description { get; set; }
+
     public DateTime Created { get; set; }
+
     public DateTime? Expires { get; set; }
+
     public IEnumerable<string> IdentityGrantNames { get; set; } = Enumerable.Empty<string>();
+
     public IEnumerable<string> ApiGrantNames { get; set; } = Enumerable.Empty<string>();
 }

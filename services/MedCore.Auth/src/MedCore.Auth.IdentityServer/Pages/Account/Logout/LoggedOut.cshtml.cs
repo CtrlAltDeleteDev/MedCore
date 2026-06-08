@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Services;
+﻿using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,9 +10,9 @@ public class LoggedOut : PageModel
 {
     private readonly IIdentityServerInteractionService _interactionService;
 
-    public LoggedOutViewModel View { get; set; } = default!;
-
     public LoggedOut(IIdentityServerInteractionService interactionService) => _interactionService = interactionService;
+
+    public LoggedOutViewModel View { get; set; } = default!;
 
     public async Task OnGet(string? logoutId)
     {

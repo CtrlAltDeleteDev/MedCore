@@ -1,17 +1,10 @@
-using MedCore.Appointment.Application.Commands.CreateNewMeet;
+﻿using MedCore.Appointment.Application.Commands.CreateNewMeet;
 
 namespace MedCore.Appointment.Application.Tests.Validators
 {
     public class CreateNewMeetCommandValidatorTests
     {
         private readonly CreateNewMeetCommandValidator _sut = new();
-
-        private static CreateNewMeetCommand ValidCommand() => new(
-            DocId: 1,
-            StartDateTime: DateTime.UtcNow.AddDays(1),
-            EndDateTime: DateTime.UtcNow.AddDays(1).AddHours(1),
-            PatientId: 1,
-            SkillIds: new[] { 1 });
 
         [Fact]
         public void Valid_command_passes()
@@ -65,5 +58,12 @@ namespace MedCore.Appointment.Application.Tests.Validators
             Assert.False(result.IsValid);
             Assert.Contains(result.Errors, e => e.PropertyName == nameof(cmd.SkillIds));
         }
+
+        private static CreateNewMeetCommand ValidCommand() => new(
+        DocId: 1,
+        StartDateTime: DateTime.UtcNow.AddDays(1),
+        EndDateTime: DateTime.UtcNow.AddDays(1).AddHours(1),
+        PatientId: 1,
+        SkillIds: new[] { 1 });
     }
 }

@@ -1,4 +1,4 @@
-using MedCore.Appointment.Api;
+﻿using MedCore.Appointment.Api;
 using MedCore.Appointment.Application;
 using MedCore.Appoitment.Data;
 

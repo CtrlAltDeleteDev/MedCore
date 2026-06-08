@@ -1,4 +1,4 @@
-var builder = DistributedApplication.CreateBuilder(args);
+﻿var builder = DistributedApplication.CreateBuilder(args);
 
 var jwtIssuer = builder.AddParameter("jwt-issuer");
 var jwtAudience = builder.AddParameter("jwt-audience");
@@ -20,7 +20,7 @@ var appoitmentMigrator = builder.AddProject<Projects.MedCore_Appointment_Databas
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)
     .WaitFor(sqlDb)
     .WaitFor(authMigrator);
-    
+
 builder
     .AddProject<Projects.MedCore_Auth_IdentityServer>("medcore-auth-identityserver")
     .WithEnvironment("ConnectionStrings__DefaultConnection", sqlDb.Resource.ConnectionStringExpression)

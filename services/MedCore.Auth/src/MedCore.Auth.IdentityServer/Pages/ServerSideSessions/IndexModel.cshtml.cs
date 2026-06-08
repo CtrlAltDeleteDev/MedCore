@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Models;
+﻿using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +29,12 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public string? Prev { get; set; }
 
+    [BindProperty]
+    public string? SessionId { get; set; }
+
     public async Task<ActionResult> OnGet()
     {
-        //Replace with an authorization policy check
+        // Replace with an authorization policy check
         if (HttpContext.Connection.IsRemote())
         {
             return NotFound();
@@ -52,12 +55,9 @@ public class IndexModel : PageModel
         return Page();
     }
 
-    [BindProperty]
-    public string? SessionId { get; set; }
-
     public async Task<IActionResult> OnPost()
     {
-        //Replace with an authorization policy check
+        // Replace with an authorization policy check
         if (HttpContext.Connection.IsRemote())
         {
             return NotFound();

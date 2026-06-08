@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Duende.IdentityModel;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
@@ -113,7 +113,32 @@ public class Callback : PageModel
         return Redirect(returnUrl);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1851:Possible multiple enumerations of 'IEnumerable' collection", Justification = "<Pending>")]
+    // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
+    // this will be different for WS-Fed, SAML2p or other protocols
+    private static void CaptureExternalLoginContext(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
+    {
+        ArgumentNullException.ThrowIfNull(externalResult.Principal, nameof(externalResult.Principal));
+
+        // capture the idp used to login, so the session knows where the user came from
+        localClaims.Add(new Claim(JwtClaimTypes.IdentityProvider, externalResult.Properties?.Items["scheme"] ?? "unknown identity provider"));
+
+        // if the external system sent a session id claim, copy it over
+        // so we can use it for single sign-out
+        var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
+        if (sid != null)
+        {
+            localClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));
+        }
+
+        // if the external provider issued an id_token, we'll keep it for signout
+        var idToken = externalResult.Properties?.GetTokenValue("id_token");
+        if (idToken != null)
+        {
+            localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
+        }
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1851:Possible multiple enumerations of 'IEnumerable' collection", Justification = "No need")]
     private async Task<ApplicationUser> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
     {
         var sub = Guid.NewGuid().ToString();
@@ -184,30 +209,5 @@ public class Callback : PageModel
         }
 
         return user;
-    }
-
-    // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
-    // this will be different for WS-Fed, SAML2p or other protocols
-    private static void CaptureExternalLoginContext(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
-    {
-        ArgumentNullException.ThrowIfNull(externalResult.Principal, nameof(externalResult.Principal));
-
-        // capture the idp used to login, so the session knows where the user came from
-        localClaims.Add(new Claim(JwtClaimTypes.IdentityProvider, externalResult.Properties?.Items["scheme"] ?? "unknown identity provider"));
-
-        // if the external system sent a session id claim, copy it over
-        // so we can use it for single sign-out
-        var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
-        if (sid != null)
-        {
-            localClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));
-        }
-
-        // if the external provider issued an id_token, we'll keep it for signout
-        var idToken = externalResult.Properties?.GetTokenValue("id_token");
-        if (idToken != null)
-        {
-            localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
-        }
     }
 }

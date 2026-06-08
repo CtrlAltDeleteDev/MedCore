@@ -2,7 +2,8 @@
 {
     public class Settings
     {
-        public MigrationSettings MigrationSettings { get; set; }
-        public bool SeedData {  get; set; }
+        public required MigrationSettings MigrationSettings { get; set; }
+
+        public bool SeedData { get; set; }
     }
 }

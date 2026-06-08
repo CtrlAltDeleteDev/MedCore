@@ -8,10 +8,10 @@
     <UserSecretsId>6c8a1c5c-436d-4fa5-9c07-f2c7879f1a9c</UserSecretsId>
   </PropertyGroup>  
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.3.5" />
-    <PackageReference Include="Aspire.Hosting.Azure.Sql" Version="13.3.5" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.3.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Aspire.Hosting.AppHost"  />
+    <PackageReference Include="Aspire.Hosting.Azure.Sql" />
+    <PackageReference Include="Aspire.Hosting.SqlServer"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
   </ItemGroup>  
   <ItemGroup>
     <ProjectReference Include="..\..\..\MedCore.Appointment\Integration\MedCore.Appointment.DatabaseMigrationJob\MedCore.Appointment.DatabaseMigrationJob.csproj" />

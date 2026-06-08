@@ -1,8 +1,5 @@
 ﻿using MedCore.Appointment.Application.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 {

@@ -1,8 +1,5 @@
 ﻿using MedCore.Appoitment.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedCore.Appoitment.Data
 {
@@ -14,7 +11,9 @@ namespace MedCore.Appoitment.Data
         }
 
         public DbSet<Employee> Employees { get; set; }
+
         public DbSet<Skill> Skills { get; set; }
+
         public DbSet<Meet> Meets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -31,10 +30,10 @@ namespace MedCore.Appoitment.Data
                 .WithMany(s => s.Employees)
                 .UsingEntity(j => j.ToTable("EmployeeSkills"));
 
-             builder.Entity<Meet>()
-                .HasOne(m => m.Employee)
-                .WithMany(e => e.Meets)
-                .HasForeignKey(m => m.EmployeeId);
+            builder.Entity<Meet>()
+               .HasOne(m => m.Employee)
+               .WithMany(e => e.Meets)
+               .HasForeignKey(m => m.EmployeeId);
 
             builder.Entity<Employee>().Property(x => x.FullName).IsRequired().HasMaxLength(256);
             builder.Entity<Employee>().Property(x => x.Title).IsRequired().HasMaxLength(128);

@@ -2,6 +2,6 @@
 {
     public class MigrationSettings
     {
-        public Dictionary<string,string> TargetMigration {  get; set; }
+        public required Dictionary<string, string> TargetMigration { get; set; }
     }
 }

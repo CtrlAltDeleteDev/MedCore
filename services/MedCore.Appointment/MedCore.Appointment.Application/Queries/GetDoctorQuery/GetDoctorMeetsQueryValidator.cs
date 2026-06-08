@@ -1,7 +1,4 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MedCore.Appointment.Application.Queries.GetDoctorQuery
 {
@@ -9,7 +6,7 @@ namespace MedCore.Appointment.Application.Queries.GetDoctorQuery
     {
         public GetDoctorMeetsQueryValidator()
         {
-            RuleFor(x => x.doctorId).NotEmpty().WithMessage("DoctorId cannot be empty.");
+            RuleFor(x => x.DoctorId).NotEmpty().WithMessage("DoctorId cannot be empty.");
         }
     }
 }

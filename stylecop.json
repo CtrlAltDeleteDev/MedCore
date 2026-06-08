@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "orderingRules": {
+      "usingDirectivesPlacement": "insideNamespace"
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": true,
+      "allowedHungarianPrefixes": [
+        "db",
+        "do",
+        "id",
+        "if",
+        "in",
+        "is",
+        "my",
+        "no",
+        "on",
+        "to",
+        "ui",
+        "vm",
+        "h",
+        "up",
+        "cv",
+        "dr",
+        "fw",
+        "cw",
+        "t",
+        "cf",
+        "os",
+        "d",
+        "p",
+        "l",
+        "ds"
+      ]
+    }
+  }
+}
