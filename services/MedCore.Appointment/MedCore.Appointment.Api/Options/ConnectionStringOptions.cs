@@ -1,4 +1,4 @@
-namespace MedCore.Appointment.Api.Options
+﻿namespace MedCore.Appointment.Api.Options
 {
     public class ConnectionStringOptions
     {
