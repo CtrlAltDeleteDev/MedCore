@@ -1,4 +1,4 @@
-using MedCore.Appoitment.Data;
+﻿using MedCore.Appoitment.Data;
 using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
 using MedCore.Appoitment.Data.Specifications;
@@ -6,9 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedCore.Appoitment.Infrastructure.Repositories;
 
-public class SkillRepository(AppoitmentDbContext dbContext) : IRepository<Skill>
+public class SkillRepository : IRepository<Skill>
 {
-    private readonly AppoitmentDbContext _dbContext = dbContext;
+    private readonly AppoitmentDbContext _dbContext;
+
+    public SkillRepository(AppoitmentDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public async Task<IEnumerable<Skill>> GetItemsAsync(ISpecification<Skill> spec, bool useAsNoTracking = false, CancellationToken cancellationToken = default)
     {
         var query = _dbContext.Skills

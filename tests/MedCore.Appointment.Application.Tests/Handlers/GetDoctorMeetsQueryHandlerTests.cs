@@ -8,30 +8,6 @@ namespace MedCore.Appointment.Application.Tests.Handlers
 {
     public class GetDoctorMeetsQueryHandlerTests
     {
-        private static GetDoctorMeetsQueryHandler BuildHandler(string dbName)
-        {
-            var db = DbContextFactory.Create(dbName);
-            return new(new MeetRepository(db), NullLogger<GetDoctorMeetsQueryHandler>.Instance);
-        }
-
-        private static async Task SeedAsync(string dbName)
-        {
-            await using var db = DbContextFactory.Create(dbName);
-            var base_ = DateTime.UtcNow.AddDays(1);
-
-            db.AddRange(
-                new Meet { EmployeeId = 1, PatientId = 1, Subject = "A", SkillIds = new[] { 1 }, IsActive = true,
-                    StartTime = base_,              EndTime = base_.AddHours(1) },
-                new Meet { EmployeeId = 1, PatientId = 2, Subject = "B", SkillIds = new[] { 1 }, IsActive = true,
-                    StartTime = base_.AddHours(2),  EndTime = base_.AddHours(3) },
-                new Meet { EmployeeId = 1, PatientId = 3, Subject = "Cancelled", SkillIds = new[] { 1 }, IsActive = false,
-                    StartTime = base_.AddHours(4),  EndTime = base_.AddHours(5) },
-                new Meet { EmployeeId = 2, PatientId = 4, Subject = "Other doc", SkillIds = new[] { 1 }, IsActive = true,
-                    StartTime = base_,              EndTime = base_.AddHours(1) }
-            );
-            await db.SaveChangesAsync();
-        }
-
         [Fact]
         public async Task Returns_only_active_meets_for_doctor()
         {
@@ -64,7 +40,7 @@ namespace MedCore.Appointment.Application.Tests.Handlers
 
             var result = await BuildHandler(db).Handle(new GetDoctorMeetsQuery(1), CancellationToken.None);
 
-            var times = result.Value!.Select(m => m.startTime).ToArray();
+            var times = result.Value!.Select(m => m.StartTime).ToArray();
             Assert.Equal(times.OrderBy(t => t), times);
         }
 
@@ -78,6 +54,41 @@ namespace MedCore.Appointment.Application.Tests.Handlers
 
             Assert.True(result.IsSuccess);
             Assert.Empty(result.Value!);
+        }
+
+        private static GetDoctorMeetsQueryHandler BuildHandler(string dbName)
+        {
+            var db = DbContextFactory.Create(dbName);
+            return new(new MeetRepository(db), NullLogger<GetDoctorMeetsQueryHandler>.Instance);
+        }
+
+        private static async Task SeedAsync(string dbName)
+        {
+            await using var db = DbContextFactory.Create(dbName);
+            var @base = DateTime.UtcNow.AddDays(1);
+
+            db.AddRange(
+            new Meet
+            {
+                EmployeeId = 1, PatientId = 1, Subject = "A", SkillIds = [1], IsActive = true,
+                StartTime = @base, EndTime = @base.AddHours(1)
+            },
+            new Meet
+            {
+                EmployeeId = 1, PatientId = 2, Subject = "B", SkillIds = [1], IsActive = true,
+                StartTime = @base.AddHours(2), EndTime = @base.AddHours(3)
+            },
+            new Meet
+            {
+                EmployeeId = 1, PatientId = 3, Subject = "Cancelled", SkillIds = [1], IsActive = false,
+                StartTime = @base.AddHours(4), EndTime = @base.AddHours(5)
+            },
+            new Meet
+            {
+                EmployeeId = 2, PatientId = 4, Subject = "Other doc", SkillIds = [1], IsActive = true,
+                StartTime = @base, EndTime = @base.AddHours(1)
+            });
+            await db.SaveChangesAsync();
         }
     }
 }

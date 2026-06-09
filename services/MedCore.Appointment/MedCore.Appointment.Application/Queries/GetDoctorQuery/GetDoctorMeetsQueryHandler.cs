@@ -1,4 +1,4 @@
-using MedCore.Appointment.Application.Common;
+﻿using MedCore.Appointment.Application.Common;
 using MedCore.Appointment.Application.DTOs;
 using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
@@ -8,18 +8,25 @@ using Microsoft.Extensions.Logging;
 
 namespace MedCore.Appointment.Application.Queries.GetDoctorQuery
 {
-    public class GetDoctorMeetsQueryHandler(IRepository<Meet> meetRepository, ILogger<GetDoctorMeetsQueryHandler> logger)
-        : IRequestHandler<GetDoctorMeetsQuery, Result<MeetsShortDto[]>>
+    public class GetDoctorMeetsQueryHandler : IRequestHandler<GetDoctorMeetsQuery, Result<MeetsShortDto[]>>
     {
-        private readonly IRepository<Meet> _meetRepository = meetRepository;
-        private readonly ILogger<GetDoctorMeetsQueryHandler> _logger = logger;
+        private readonly IRepository<Meet> _meetRepository;
+        private readonly ILogger<GetDoctorMeetsQueryHandler> _logger;
+
+        public GetDoctorMeetsQueryHandler(IRepository<Meet> meetRepository, ILogger<GetDoctorMeetsQueryHandler> logger)
+        {
+            _meetRepository = meetRepository;
+            _logger = logger;
+        }
 
         public async Task<Result<MeetsShortDto[]>> Handle(GetDoctorMeetsQuery request, CancellationToken cancellationToken)
         {
             try
             {
                 var meets = await _meetRepository.GetItemsAsync(
-                    new GetActiveMeetsByEmployeeIdSpec(request.doctorId), useAsNoTracking: true, cancellationToken);
+                    new GetActiveMeetsByEmployeeIdSpec(request.DoctorId),
+                    useAsNoTracking: true,
+                    cancellationToken);
 
                 var result = meets
                     .OrderBy(m => m.StartTime)
@@ -30,7 +37,7 @@ namespace MedCore.Appointment.Application.Queries.GetDoctorQuery
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting doctor meets for doctor with id {DocId}", request.doctorId);
+                _logger.LogError(ex, "Error while getting doctor meets for doctor with id {DocId}", request.DoctorId);
                 return Result<MeetsShortDto[]>.Fail("Error while getting doctor meets.");
             }
         }

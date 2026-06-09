@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using MedCore.Appoitment.Data.Entities;
 
 namespace MedCore.Appoitment.Data.Specifications;

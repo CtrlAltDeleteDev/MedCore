@@ -1,4 +1,4 @@
-using MedCore.Appointment.Application.Common;
+﻿using MedCore.Appointment.Application.Common;
 using MedCore.Appointment.Application.DTOs;
 using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
@@ -8,11 +8,16 @@ using Microsoft.Extensions.Logging;
 
 namespace MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery
 {
-    public class GetDoctorsBySkillQueryHandler(IRepository<Employee> employeeRepository, ILogger<GetDoctorsBySkillQueryHandler> logger)
-        : IRequestHandler<GetDoctorsBySkillQuery, Result<EmployeeDto[]>>
+    public class GetDoctorsBySkillQueryHandler : IRequestHandler<GetDoctorsBySkillQuery, Result<EmployeeDto[]>>
     {
-        private readonly IRepository<Employee> _employeeRepository = employeeRepository;
-        private readonly ILogger<GetDoctorsBySkillQueryHandler> _logger = logger;
+        private readonly IRepository<Employee> _employeeRepository;
+        private readonly ILogger<GetDoctorsBySkillQueryHandler> _logger;
+
+        public GetDoctorsBySkillQueryHandler(IRepository<Employee> employeeRepository, ILogger<GetDoctorsBySkillQueryHandler> logger)
+        {
+            _employeeRepository = employeeRepository;
+            _logger = logger;
+        }
 
         public async Task<Result<EmployeeDto[]>> Handle(GetDoctorsBySkillQuery request, CancellationToken cancellationToken)
         {

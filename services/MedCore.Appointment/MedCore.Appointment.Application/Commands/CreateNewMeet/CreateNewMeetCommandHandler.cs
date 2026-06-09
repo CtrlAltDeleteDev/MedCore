@@ -1,4 +1,4 @@
-using MedCore.Appointment.Application.Common;
+﻿using MedCore.Appointment.Application.Common;
 using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
 using MedCore.Appoitment.Data.Specifications;
@@ -7,15 +7,21 @@ using Microsoft.Extensions.Logging;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 {
-    public class CreateNewMeetCommandHandler(
-        IRepository<Meet> meetRepository,
-        IRepository<Skill> skillRepository,
-        ILogger<CreateNewMeetCommandHandler> logger)
-        : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
+    public class CreateNewMeetCommandHandler : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
     {
-        private readonly IRepository<Meet> _meetRepository = meetRepository;
-        private readonly IRepository<Skill> _skillRepository = skillRepository;
-        private readonly ILogger<CreateNewMeetCommandHandler> _logger = logger;
+        private readonly IRepository<Meet> _meetRepository;
+        private readonly IRepository<Skill> _skillRepository;
+        private readonly ILogger<CreateNewMeetCommandHandler> _logger;
+
+        public CreateNewMeetCommandHandler(
+            IRepository<Meet> meetRepository,
+            IRepository<Skill> skillRepository,
+            ILogger<CreateNewMeetCommandHandler> logger)
+        {
+            _meetRepository = meetRepository;
+            _skillRepository = skillRepository;
+            _logger = logger;
+        }
 
         public async Task<Result<Unit>> Handle(CreateNewMeetCommand request, CancellationToken cancellationToken)
         {
@@ -25,17 +31,23 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
                     new GetMeetsByEmployeeIdSpec(request.DocId), cancellationToken: cancellationToken)).ToList();
 
                 if (!IsTimeSlotAvailable(request.StartDateTime, request.EndDateTime, docMeets))
+                {
                     return Result<Unit>.Fail("The selected time slot is not available for the doctor.");
+                }
 
-                var skills = (await _skillRepository.GetItemsAsync(
-                    new GetSkillsByIdsSpec(request.SkillIds), cancellationToken: cancellationToken));
+                var skills = await _skillRepository.GetItemsAsync(
+                    new GetSkillsByIdsSpec(request.SkillIds),
+                    cancellationToken: cancellationToken);
 
-                if (skills.Count() != request.SkillIds.Length)
+                var skillsArray = skills as Skill[] ?? skills.ToArray();
+                if (skillsArray.Count() != request.SkillIds.Length)
+                {
                     return Result<Unit>.Fail("One or more selected skills are invalid.");
+                }
 
                 var newSchedule = new Meet
                 {
-                    Subject = string.Join(", ", skills.Select(s => s.Name)),
+                    Subject = string.Join(", ", skillsArray.Select(s => s.Name)),
                     StartTime = request.StartDateTime,
                     EndTime = request.EndDateTime,
                     EmployeeId = request.DocId,

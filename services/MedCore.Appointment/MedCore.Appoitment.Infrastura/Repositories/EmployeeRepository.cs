@@ -1,5 +1,4 @@
-using MedCore.Appointment.Application.DTOs;
-using MedCore.Appoitment.Data;
+﻿using MedCore.Appoitment.Data;
 using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
 using MedCore.Appoitment.Data.Specifications;
@@ -7,9 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedCore.Appoitment.Infrastructure.Repositories;
 
-public class EmployeeRepository(AppoitmentDbContext dbContext) : IRepository<Employee>
+public class EmployeeRepository : IRepository<Employee>
 {
-    private readonly AppoitmentDbContext _dbContext = dbContext;
+    private readonly AppoitmentDbContext _dbContext;
+
+    public EmployeeRepository(AppoitmentDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
     public async Task<IEnumerable<Employee>> GetItemsAsync(ISpecification<Employee> spec, bool useAsNoTracking = false,  CancellationToken cancellationToken = default)
     {
@@ -17,7 +21,7 @@ public class EmployeeRepository(AppoitmentDbContext dbContext) : IRepository<Emp
             .Include(e => e.Skills)
             .Where(spec.Criteria);
 
-        return await (useAsNoTracking ? query.AsNoTracking() : query).ToListAsync(cancellationToken);            
+        return await (useAsNoTracking ? query.AsNoTracking() : query).ToListAsync(cancellationToken);
     }
 
     public async Task Add(Employee entity,  CancellationToken cancellationToken = default)

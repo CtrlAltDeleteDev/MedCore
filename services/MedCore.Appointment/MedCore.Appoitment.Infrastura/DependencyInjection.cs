@@ -1,4 +1,4 @@
-using MedCore.Appoitment.Data.Entities;
+﻿using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
 using MedCore.Appoitment.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;

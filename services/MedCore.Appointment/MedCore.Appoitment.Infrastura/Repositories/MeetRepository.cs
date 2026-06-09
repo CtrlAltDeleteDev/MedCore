@@ -1,5 +1,4 @@
-using MedCore.Appointment.Application.DTOs;
-using MedCore.Appoitment.Data;
+﻿using MedCore.Appoitment.Data;
 using MedCore.Appoitment.Data.Entities;
 using MedCore.Appoitment.Data.Repositories;
 using MedCore.Appoitment.Data.Specifications;
@@ -7,14 +6,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedCore.Appoitment.Infrastructure.Repositories;
 
-public class MeetRepository(AppoitmentDbContext dbContext): IRepository<Meet>
+public class MeetRepository : IRepository<Meet>
 {
-    private readonly AppoitmentDbContext _dbContext = dbContext;
+    private readonly AppoitmentDbContext _dbContext;
+
+    public MeetRepository(AppoitmentDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public async Task<IEnumerable<Meet>> GetItemsAsync(ISpecification<Meet> spec, bool useAsNoTracking = false, CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Meets
+        var query = _dbContext
+            .Meets
             .Where(spec.Criteria);
-            
+
         return await (useAsNoTracking ? query.AsNoTracking() : query).ToListAsync(cancellationToken);
     }
 
@@ -24,7 +30,7 @@ public class MeetRepository(AppoitmentDbContext dbContext): IRepository<Meet>
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async  Task<Meet> GetItemAsync(ISpecification<Meet> spec, bool useAsNoTracking = false, CancellationToken cancellationToken = default)
+    public async Task<Meet> GetItemAsync(ISpecification<Meet> spec, bool useAsNoTracking = false, CancellationToken cancellationToken = default)
     {
         var query = _dbContext.Meets;
 
