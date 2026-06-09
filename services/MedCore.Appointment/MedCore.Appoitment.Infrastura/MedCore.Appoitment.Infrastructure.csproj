@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MedCore.Appointment.Application\MedCore.Appointment.Application.csproj" />
+    <ProjectReference Include="..\MedCore.Appoitment.Data\MedCore.Appoitment.Data.csproj" />
+  </ItemGroup>
+
+</Project>

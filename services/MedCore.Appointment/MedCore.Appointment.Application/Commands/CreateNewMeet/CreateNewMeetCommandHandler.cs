@@ -1,20 +1,25 @@
 ﻿using MedCore.Appointment.Application.Common;
-using MedCore.Appoitment.Data;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Data.Repositories;
+using MedCore.Appoitment.Data.Specifications;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MedCore.Appointment.Application.Commands.CreateNewMeet
 {
     public class CreateNewMeetCommandHandler : IRequestHandler<CreateNewMeetCommand, Result<Unit>>
     {
-        private readonly AppoitmentDbContext _appoitmentDbContext;
+        private readonly IRepository<Meet> _meetRepository;
+        private readonly IRepository<Skill> _skillRepository;
         private readonly ILogger<CreateNewMeetCommandHandler> _logger;
 
-        public CreateNewMeetCommandHandler(AppoitmentDbContext appoitmentDbContext, ILogger<CreateNewMeetCommandHandler> logger)
+        public CreateNewMeetCommandHandler(
+            IRepository<Meet> meetRepository,
+            IRepository<Skill> skillRepository,
+            ILogger<CreateNewMeetCommandHandler> logger)
         {
-            _appoitmentDbContext = appoitmentDbContext;
+            _meetRepository = meetRepository;
+            _skillRepository = skillRepository;
             _logger = logger;
         }
 
@@ -22,23 +27,27 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
         {
             try
             {
-                var docMeets = await _appoitmentDbContext.Meets.Where(m => m.EmployeeId == request.DocId).ToListAsync(cancellationToken);
+                var docMeets = (await _meetRepository.GetItemsAsync(
+                    new GetMeetsByEmployeeIdSpec(request.DocId), cancellationToken: cancellationToken)).ToList();
 
                 if (!IsTimeSlotAvailable(request.StartDateTime, request.EndDateTime, docMeets))
                 {
                     return Result<Unit>.Fail("The selected time slot is not available for the doctor.");
                 }
 
-                var skills = await _appoitmentDbContext.Skills.Where(s => request.SkillIds.Contains(s.Id)).ToListAsync(cancellationToken);
+                var skills = await _skillRepository.GetItemsAsync(
+                    new GetSkillsByIdsSpec(request.SkillIds),
+                    cancellationToken: cancellationToken);
 
-                if (skills.Count != request.SkillIds.Length)
+                var skillsArray = skills as Skill[] ?? skills.ToArray();
+                if (skillsArray.Count() != request.SkillIds.Length)
                 {
                     return Result<Unit>.Fail("One or more selected skills are invalid.");
                 }
 
-                var newSchedule = new Meet()
+                var newSchedule = new Meet
                 {
-                    Subject = string.Join(", ", skills.Select(s => s.Name)),
+                    Subject = string.Join(", ", skillsArray.Select(s => s.Name)),
                     StartTime = request.StartDateTime,
                     EndTime = request.EndDateTime,
                     EmployeeId = request.DocId,
@@ -46,10 +55,7 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
                     SkillIds = request.SkillIds,
                 };
 
-                _appoitmentDbContext.Meets.Add(newSchedule);
-
-                await _appoitmentDbContext.SaveChangesAsync(cancellationToken);
-
+                await _meetRepository.Add(newSchedule, cancellationToken);
                 return Result<Unit>.Ok(Unit.Value);
             }
             catch (Exception ex)
@@ -60,8 +66,6 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
         }
 
         private bool IsTimeSlotAvailable(DateTime start, DateTime end, List<Meet> docMeets)
-        {
-            return !docMeets.Any(meet => start < meet.EndTime && end > meet.StartTime);
-        }
+            => !docMeets.Any(meet => start < meet.EndTime && end > meet.StartTime);
     }
 }

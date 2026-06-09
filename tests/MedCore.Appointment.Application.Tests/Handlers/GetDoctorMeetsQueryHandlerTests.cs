@@ -1,6 +1,7 @@
 ﻿using MedCore.Appointment.Application.Queries.GetDoctorQuery;
 using MedCore.Appointment.Application.Tests.Helpers;
 using MedCore.Appoitment.Data.Entities;
+using MedCore.Appoitment.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MedCore.Appointment.Application.Tests.Handlers
@@ -56,53 +57,36 @@ namespace MedCore.Appointment.Application.Tests.Handlers
         }
 
         private static GetDoctorMeetsQueryHandler BuildHandler(string dbName)
-            => new(DbContextFactory.Create(dbName), NullLogger<GetDoctorMeetsQueryHandler>.Instance);
+        {
+            var db = DbContextFactory.Create(dbName);
+            return new(new MeetRepository(db), NullLogger<GetDoctorMeetsQueryHandler>.Instance);
+        }
 
         private static async Task SeedAsync(string dbName)
         {
             await using var db = DbContextFactory.Create(dbName);
-            var base_ = DateTime.UtcNow.AddDays(1);
+            var @base = DateTime.UtcNow.AddDays(1);
 
             db.AddRange(
             new Meet
             {
-                EmployeeId = 1,
-                PatientId = 1,
-                Subject = "A",
-                SkillIds = new[] { 1 },
-                IsActive = true,
-                StartTime = base_,
-                EndTime = base_.AddHours(1)
+                EmployeeId = 1, PatientId = 1, Subject = "A", SkillIds = [1], IsActive = true,
+                StartTime = @base, EndTime = @base.AddHours(1)
             },
             new Meet
             {
-                EmployeeId = 1,
-                PatientId = 2,
-                Subject = "B",
-                SkillIds = new[] { 1 },
-                IsActive = true,
-                StartTime = base_.AddHours(2),
-                EndTime = base_.AddHours(3)
+                EmployeeId = 1, PatientId = 2, Subject = "B", SkillIds = [1], IsActive = true,
+                StartTime = @base.AddHours(2), EndTime = @base.AddHours(3)
             },
             new Meet
             {
-                EmployeeId = 1,
-                PatientId = 3,
-                Subject = "Cancelled",
-                SkillIds = new[] { 1 },
-                IsActive = false,
-                StartTime = base_.AddHours(4),
-                EndTime = base_.AddHours(5)
+                EmployeeId = 1, PatientId = 3, Subject = "Cancelled", SkillIds = [1], IsActive = false,
+                StartTime = @base.AddHours(4), EndTime = @base.AddHours(5)
             },
             new Meet
             {
-                EmployeeId = 2,
-                PatientId = 4,
-                Subject = "Other doc",
-                SkillIds = new[] { 1 },
-                IsActive = true,
-                StartTime = base_,
-                EndTime = base_.AddHours(1)
+                EmployeeId = 2, PatientId = 4, Subject = "Other doc", SkillIds = [1], IsActive = true,
+                StartTime = @base, EndTime = @base.AddHours(1)
             });
             await db.SaveChangesAsync();
         }
