@@ -16,7 +16,6 @@ namespace MedCore.Appointment.Application
 
         public static IServiceCollection AddValidators(this IServiceCollection services)
         {
-            services.AddScoped<IValidator<GetDoctorsBySkillQuery>, GetDoctorsBySkillQueryValidator>();
             services.AddScoped<IValidator<GetDoctorMeetsQuery>, GetDoctorMeetsQueryValidator>();
             services.AddScoped<IValidator<CreateNewMeetCommand>, CreateNewMeetCommandValidator>();
             return services;
