@@ -8,9 +8,9 @@ namespace MedCore.Appoitment.Infrastructure.Repositories;
 
 public class MeetRepository : IRepository<Meet>
 {
-    private readonly AppoitmentDbContext _dbContext;
+    private readonly AppointmentDbContext _dbContext;
 
-    public MeetRepository(AppoitmentDbContext dbContext)
+    public MeetRepository(AppointmentDbContext dbContext)
     {
         _dbContext = dbContext;
     }

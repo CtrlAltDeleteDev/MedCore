@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MedCore.Appoitment.Data.Migrations
 {
-    [DbContext(typeof(AppoitmentDbContext))]
+    [DbContext(typeof(AppointmentDbContext))]
     [Migration("20260601141919_InitialMigration")]
     partial class InitialMigration
     {

@@ -21,5 +21,7 @@
         public Employee Employee { get; set; }
 
         public Skill[] Skills { get; set; }
+
+        public Status Status { get; set; }
     }
 }

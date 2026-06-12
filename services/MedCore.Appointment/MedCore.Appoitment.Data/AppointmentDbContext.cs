@@ -1,11 +1,12 @@
 ﻿using MedCore.Appoitment.Data.Entities;
+using MedCore.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedCore.Appoitment.Data
 {
-    public class AppoitmentDbContext : DbContext
+    public class AppointmentDbContext : DbContext
     {
-        public AppoitmentDbContext(DbContextOptions<AppoitmentDbContext> options)
+        public AppointmentDbContext(DbContextOptions<AppointmentDbContext> options)
         : base(options)
         {
         }
@@ -42,6 +43,13 @@ namespace MedCore.Appoitment.Data
 
             builder.Entity<Meet>().Property(x => x.Subject).IsRequired().HasMaxLength(128);
             builder.Entity<Meet>().HasMany(e => e.Skills);
+        }
+
+        protected override void ConfigureConventions(
+            ModelConfigurationBuilder configurationBuilder)
+        {
+            // Add conventions in priority order
+            configurationBuilder.Conventions.Add(_ => new EnumConvention());
         }
     }
 }

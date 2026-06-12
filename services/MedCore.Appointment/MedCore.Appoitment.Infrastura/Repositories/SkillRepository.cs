@@ -8,9 +8,9 @@ namespace MedCore.Appoitment.Infrastructure.Repositories;
 
 public class SkillRepository : IRepository<Skill>
 {
-    private readonly AppoitmentDbContext _dbContext;
+    private readonly AppointmentDbContext _dbContext;
 
-    public SkillRepository(AppoitmentDbContext dbContext)
+    public SkillRepository(AppointmentDbContext dbContext)
     {
         _dbContext = dbContext;
     }

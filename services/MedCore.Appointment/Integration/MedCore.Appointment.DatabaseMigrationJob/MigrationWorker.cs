@@ -9,9 +9,9 @@ namespace MedCore.Appointment.DatabaseMigrationJob
     public class MigrationWorker
     {
         private readonly Settings _settings;
-        private readonly AppoitmentDbContext _dbContext;
+        private readonly AppointmentDbContext _dbContext;
 
-        public MigrationWorker(Settings settings, AppoitmentDbContext dbContext)
+        public MigrationWorker(Settings settings, AppointmentDbContext dbContext)
         {
             _settings = settings;
             _dbContext = dbContext;
@@ -23,7 +23,7 @@ namespace MedCore.Appointment.DatabaseMigrationJob
             {
                 Log.Information("Starting database migration proccess...");
                 await _dbContext.Database
-                    .MigrateAsync(_settings.MigrationSettings.TargetMigration[nameof(AppoitmentDbContext)], cancellationToken);
+                    .MigrateAsync(_settings.MigrationSettings.TargetMigration[nameof(AppointmentDbContext)], cancellationToken);
                 Log.Information("Done migrating database");
 
                 if (_settings.SeedData)
@@ -42,7 +42,7 @@ namespace MedCore.Appointment.DatabaseMigrationJob
             return 1;
         }
 
-        private async Task EnsureSeedData(AppoitmentDbContext dbContext, CancellationToken cancellationToken)
+        private async Task EnsureSeedData(AppointmentDbContext dbContext, CancellationToken cancellationToken)
         {
             if (await dbContext.Set<Employee>().AnyAsync(cancellationToken))
             {
