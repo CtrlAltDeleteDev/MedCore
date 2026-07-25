@@ -11,7 +11,7 @@ namespace MedCore.Appointment.Application.Tests.Helpers
         // truly share one in-memory store across context instances.
         private static readonly Dictionary<string, InMemoryDatabaseRoot> _roots = new();
 
-        public static AppoitmentDbContext Create(string dbName)
+        public static AppointmentDbContext Create(string dbName)
         {
             if (!_roots.TryGetValue(dbName, out var root))
             {
@@ -19,12 +19,12 @@ namespace MedCore.Appointment.Application.Tests.Helpers
                 _roots[dbName] = root;
             }
 
-            var options = new DbContextOptionsBuilder<AppoitmentDbContext>()
+            var options = new DbContextOptionsBuilder<AppointmentDbContext>()
                 .UseInMemoryDatabase(dbName, root)
                 .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            return new AppoitmentDbContext(options);
+            return new AppointmentDbContext(options);
         }
     }
 }

@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/common/">
+    <Project Path="common/MedCore.Persistence/MedCore.Persistence.csproj" />
     <Project Path="common/MedCore.Validation/MedCore.Validation.csproj" />
   </Folder>
   <Folder Name="/host/">

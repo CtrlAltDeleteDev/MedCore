@@ -8,7 +8,7 @@ namespace MedCore.Appoitment.Data
     {
         public static void AddAppointmentData(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<AppoitmentDbContext>(options =>
+            services.AddDbContext<AppointmentDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
     }

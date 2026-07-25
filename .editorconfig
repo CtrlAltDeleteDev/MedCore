@@ -18,3 +18,4 @@ dotnet_naming_symbols.private_fields.applicable_kinds = field
 dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_style.underscore_prefixed_style.required_prefix = _
 dotnet_naming_style.underscore_prefixed_style.capitalization = camel_case
+dotnet_diagnostic.SA1101.severity = none

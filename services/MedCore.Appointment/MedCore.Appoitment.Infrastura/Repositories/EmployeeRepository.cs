@@ -8,9 +8,9 @@ namespace MedCore.Appoitment.Infrastructure.Repositories;
 
 public class EmployeeRepository : IRepository<Employee>
 {
-    private readonly AppoitmentDbContext _dbContext;
+    private readonly AppointmentDbContext _dbContext;
 
-    public EmployeeRepository(AppoitmentDbContext dbContext)
+    public EmployeeRepository(AppointmentDbContext dbContext)
     {
         _dbContext = dbContext;
     }

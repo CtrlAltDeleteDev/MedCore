@@ -53,6 +53,7 @@ namespace MedCore.Appointment.Application.Commands.CreateNewMeet
                     EmployeeId = request.DocId,
                     PatientId = request.PatientId,
                     SkillIds = request.SkillIds,
+                    Status = Status.Pending
                 };
 
                 await _meetRepository.Add(newSchedule, cancellationToken);

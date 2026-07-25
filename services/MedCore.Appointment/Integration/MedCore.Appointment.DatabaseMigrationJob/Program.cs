@@ -26,9 +26,9 @@ internal class Program
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        var migrationAssembly = typeof(AppoitmentDbContext).Assembly.FullName;
+        var migrationAssembly = typeof(AppointmentDbContext).Assembly.FullName;
 
-        builder.Services.AddDbContext<AppoitmentDbContext>(opts =>
+        builder.Services.AddDbContext<AppointmentDbContext>(opts =>
         {
             opts.UseSqlServer(connectionString, sql =>
             {
