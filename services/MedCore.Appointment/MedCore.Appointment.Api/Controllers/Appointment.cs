@@ -3,56 +3,32 @@ using MedCore.Appointment.Application.Commands.CreateNewMeet;
 using MedCore.Appointment.Application.DTOs;
 using MedCore.Appointment.Application.Queries.GetDoctorQuery;
 using MedCore.Appointment.Application.Queries.GetDoctorsBySkillQuery;
-using MedCore.Appointment.Application.Queries.GetSkillsQuery;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedCore.Appointment.Api.Controllers
 {
     [ApiController]
     [Route("api/appointments")]
-    [Authorize]
     [Produces("application/json")]
     public class Appointment(IMediator mediator,
-        IValidator<GetDoctorsBySkillQuery> getDocBySkillsValidator,
         IValidator<GetDoctorMeetsQuery> getDocMeetsValidator,
         IValidator<CreateNewMeetCommand> createNewMeetValidator) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
-        private readonly IValidator<GetDoctorsBySkillQuery> _getDocBySkillsValidator = getDocBySkillsValidator;
         private readonly IValidator<GetDoctorMeetsQuery> _getDocMeetsValidator = getDocMeetsValidator;
         private readonly IValidator<CreateNewMeetCommand> _createNewMeetValidator = createNewMeetValidator;
 
-        /// <summary>Returns all available dental skills / procedures.</summary>
-        /// <response code="200">List of skills.</response>
-        /// <response code="400">Internal error while fetching skills.</response>
-        [HttpGet("skills")]
-        [ProducesResponseType(typeof(SkillDto[]), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetSkillsAsync()
-        {
-            var result = await _mediator.Send(new GetSkillsQuery());
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
-        }
-
-        /// <summary>Returns doctors who have all of the specified skills.</summary>
-        /// <param name="skillIds">One or more skill IDs to filter by.</param>
-        /// <response code="200">Matching doctors with their skill IDs.</response>
-        /// <response code="400">Validation error or internal error.</response>
+        /// <summary>Returns all active doctors together with their assigned skill IDs.</summary>
+        /// <remarks>Skill-based filtering is performed client-side on the returned <c>skillIds</c> array of each doctor.</remarks>
+        /// <response code="200">List of active doctors with their skill IDs.</response>
+        /// <response code="400">Internal error.</response>
         [HttpGet("doctors-by-skills")]
         [ProducesResponseType(typeof(EmployeeDto[]), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetDoctorsBySkillAsync([FromQuery] int[] skillIds)
+        public async Task<IActionResult> GetDoctorsBySkillAsync()
         {
-            var query = new GetDoctorsBySkillQuery(skillIds);
-            var validationResult = _getDocBySkillsValidator.Validate(query);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
-
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(new GetActiveDoctorsQuery());
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
 
